@@ -118,7 +118,7 @@ const ProfileScreen = () => {
         }
     }
     return (
-        <ScrollView>
+        <ScrollView style={{ position: 'relative' }}>
             <View style={{ alignItems: 'center', flexDirection: 'column', width, gap: 10, paddingHorizontal: 20, paddingVertical: 10 }}>
                 {screenData.currentScreen === 12 && (<>
                     <View style={{ flexDirection: 'row', width: '100%', gap: 5, position: 'relative' }}>
@@ -145,14 +145,16 @@ const ProfileScreen = () => {
                                     />
                                 </View>
                             )}
-                            <IconCamera onPress={() => { uploadImage() }} name='camerao' style={{ backgroundColor: 'white', display: 'flex', justifyContent: 'center', right: -10, position: 'absolute', fontSize: 25, color: '#999', bottom: 0 }} />
+                            <TouchableOpacity onPress={() => { uploadImage() }} style={{ right: -10, position: 'absolute', bottom: 0 }}>
+                                <IconCamera name='camerao' style={{ backgroundColor: 'white', display: 'flex', justifyContent: 'center', fontSize: 25, color: '#999', bottom: 0 }} />
+                            </TouchableOpacity>
                         </View>
                         <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'start', marginLeft: 10 }}>
                             <Text style={{ fontSize: 20, fontFamily: 'Nunito-B', color: 'black' }}>{userData.user?.fullName}</Text>
                             <Text style={{ fontSize: 15, color: 'black' }}>{userData.user?.phone}</Text>
                         </View>
                         {(choose === 1 || choose === 3) && (
-                            <TouchableOpacity onPress={() => handleUpdateUser()} style={{ borderRadius: 5, backgroundColor: '#1dcbb6', height: 40, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: 80, position: 'absolute', right: 0, top: 20 }}>
+                            <TouchableOpacity onPress={() => handleUpdateUser()} style={{ borderRadius: 10, backgroundColor: '#1dcbb6', height: 40, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: 80, position: 'absolute', right: 0, top: 20 }}>
                                 <Text style={{ color: 'white', fontFamily: 'Nunito-B', fontSize: 14 }}>Cập nhật</Text>
                             </TouchableOpacity>
                         )}

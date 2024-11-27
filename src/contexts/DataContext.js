@@ -9,6 +9,7 @@ export const dataContext = createContext()
 const DataProvider = ({ children }) => {
 
     const [doctorRecords, setDoctorRecords] = useState([])
+    const [doctorSuggest, setDoctorSuggest] = useState([]);
     const [sicks, setSicks] = useState([])
     const [accessToken, setAccessToken] = useState()
     const [refreshToken, setRefreshToken] = useState()
@@ -27,6 +28,48 @@ const DataProvider = ({ children }) => {
     }, [payloadData.reload])
 
     useEffect(() => {
+        api({
+            type: TypeHTTP.GET,
+            path: "/doctorRecords/getAll",
+            sendToken: false,
+        }).then((res) => {
+            setDoctorRecords(
+                res.map((doctorRecord) => {
+                    const filter = payloadData.assessment.filter(
+                        (item) => item.doctor_record_id === doctorRecord._id
+                    );
+                    return {
+                        ...doctorRecord,
+                        assessment: filter.length === 0 ? 0 : filter.reduce((total, item) => (total += item.assessment_list.star), 0) / filter.length
+                    };
+                })
+            );
+            api({
+                sendToken: false,
+                type: TypeHTTP.GET,
+                path: "/doctorSuggests/get-all",
+            }).then((suggest) => {
+                const filteredDoctors = res.filter((itemDoctor) => {
+                    return suggest.some(
+                        (item) => item.doctor_record_id === itemDoctor.doctor._id
+                    );
+                });
+                setDoctorSuggest(
+                    filteredDoctors.map((doctorRecord) => {
+                        const filter = payloadData.assessment.filter(
+                            (item) => item.doctor_record_id === doctorRecord._id
+                        );
+                        return {
+                            ...doctorRecord,
+                            assessment: filter.length === 0 ? 0 : filter.reduce((total, item) => (total += item.assessment_list.star), 0) / filter.length
+                        };
+                    })
+                );
+            });
+        });
+    }, [payloadData.assessment])
+
+    useEffect(() => {
 
         const getTokens = async () => {
             const accessToken = await AsyncStorage.getItem('accessToken')
@@ -43,7 +86,8 @@ const DataProvider = ({ children }) => {
         doctorRecords,
         sicks,
         accessToken,
-        refreshToken
+        refreshToken,
+        doctorSuggest
     }
 
     const handler = {

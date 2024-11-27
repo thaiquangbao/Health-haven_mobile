@@ -427,7 +427,7 @@ const ChatArea = () => {
             </View>
             <View style={{ flexDirection: 'row', zIndex: 1, marginTop: 20, position: 'absolute', left: 0, justifyContent: 'center', width: '100%', backgroundColor: 'white', paddingVertical: 10, bottom: 10, alignItems: 'center' }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5 }}>
-                    <TextInput value={message} onChangeText={e => setMessage(e)} placeholder='Soạn Tin Nhắn' style={{ width: '75%', borderWidth: 1, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 5, borderColor: '#e5e7e9' }} />
+                    <TextInput value={message} onChangeText={e => setMessage(e)} placeholder='Soạn Tin Nhắn' style={{ width: '75%', borderWidth: 1, height: 40, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 5, borderColor: '#e5e7e9' }} />
                     <TouchableOpacity onPress={() => openGallery()}>
                         <Icon2 name='image' style={{ fontSize: 27, zIndex: 1, color: '#999' }} />
                     </TouchableOpacity>

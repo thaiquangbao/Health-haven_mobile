@@ -22,6 +22,9 @@ const CompleteInformation = () => {
     const [gender, setGender] = useState()
     const [dateOfBirth, setDateOfBirth] = useState(new Date());
     const [cccd, setCccd] = useState('')
+    const [bankName, setBankName] = useState('')
+    const [accountName, setAccountName] = useState('')
+    const [accountNumber, setAccountNumber] = useState('')
 
     const handleSelect = (value) => {
         setGender(Boolean(value))
@@ -36,6 +39,26 @@ const CompleteInformation = () => {
             utilsHandler.notify(notifyType.WARNING, 'Phải trên 18 tuổi')
             return;
         }
+        if (!/^[0-9]{9}$/.test(cccd) && !/^[0-9]{12}$/.test(cccd)) {
+            utilsHandler.notify(notifyType.WARNING, "Căn cước công dân phải chứa 9 hoặc 12 số");
+            return;
+        }
+        if (address === '') {
+            utilsHandler.notify(notifyType.WARNING, "Vui lòng nhập địa chỉ");
+            return;
+        }
+        if (!/^[A-Za-z]+$/.test(bankName)) {
+            utilsHandler.notify(notifyType.WARNING, "Tên ngân hàng không hợp lệ");
+            return;
+        }
+        if (!/^[A-Z]+$/.test(accountName)) {
+            utilsHandler.notify(notifyType.WARNING, "Tên tài khoản phải là chữ in hoa");
+            return;
+        }
+        if (!/^[0-9]+$/.test(accountNumber)) {
+            utilsHandler.notify(notifyType.WARNING, "Tên tài khoản phải là ký tự số");
+            return;
+        }
         if (gender !== true && gender !== false) {
             utilsHandler.notify(notifyType.WARNING, 'Vui lòng chọn giới tính')
             return;
@@ -47,6 +70,11 @@ const CompleteInformation = () => {
             fullName: name,
             address: address,
             dateOfBirth: dateOfBirth,
+            bank: {
+                accountNumber,
+                bankName,
+                accountName,
+            },
             sex: gender,
             cccd: cccd
         }
@@ -95,9 +123,9 @@ const CompleteInformation = () => {
             )}
 
 
-            <Image source={Logo} style={{ width: 300, height: 300, marginTop: '20%' }} />
+            <Image source={Logo} style={{ width: 200, height: 200, marginTop: '5%' }} />
             <Text style={{ fontFamily: 'Nunito-B', fontSize: 22 }}>Hoàn Thành Thông Tin Cá Nhân</Text>
-            <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, width: '75%', textAlign: 'center', marginTop: 5 }}>Hãy bổ sung thông tin cá nhân của bạn ở bên dưới.</Text>
+            <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, textAlign: 'center', marginTop: 5 }}>Hãy bổ sung thông tin cá nhân của bạn ở bên dưới.</Text>
             <TextInput value={name} onChangeText={e => setName(e)} placeholder='Họ Và Tên' style={{ color: 'black', marginTop: 10, height: 48, zIndex: 1, width: '75%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
             <TouchableOpacity style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15, fontSize: 16, backgroundColor: 'white', borderRadius: 7, width: '75%', borderColor: '#bbb', height: 48, borderWidth: 1 }} onPress={() => setShowPicker(true)}>
                 <Text style={{ color: '#999' }}>
@@ -106,6 +134,9 @@ const CompleteInformation = () => {
             </TouchableOpacity>
             <TextInput value={cccd} onChangeText={e => setCccd(e)} placeholder='Căn Cước Công Dân' style={{ color: 'black', marginTop: 10, height: 48, zIndex: 1, width: '75%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
             <TextInput value={address} onChangeText={e => setAddress(e)} placeholder='Địa Chỉ' style={{ color: 'black', marginTop: 10, height: 48, zIndex: 1, width: '75%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
+            <TextInput value={bankName} onChangeText={e => setBankName(e)} placeholder='Tên Ngân Hàng' style={{ color: 'black', marginTop: 10, height: 48, zIndex: 1, width: '75%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
+            <TextInput value={accountName} onChangeText={e => setAccountName(e)} placeholder='Tên Tài Khoản Ngân Hàng' style={{ color: 'black', marginTop: 10, height: 48, zIndex: 1, width: '75%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
+            <TextInput value={accountNumber} onChangeText={e => setAccountNumber(e)} placeholder='Số Tài Khoản' style={{ color: 'black', marginTop: 10, height: 48, zIndex: 1, width: '75%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
             <View style={{ flexDirection: 'row', gap: 10, height: 48, marginTop: 10, justifyContent: 'flex-start', width: '75%' }}>
                 <RadioButton
                     label="Nam"

@@ -84,7 +84,6 @@ const DetailAppointment = () => {
             const url = `${deploy}/meet/${payloadData.detailAppointment?._id}/${userData.user?.role === "USER"
                 ? "patient"
                 : "doctor"}?accesstoken=${accessToken}&refreshtoken=${refreshToken}`;
-            console.log(url)
             Linking.openURL(url)
         }
 
@@ -118,7 +117,7 @@ const DetailAppointment = () => {
                     <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>{payloadData.detailAppointment?.sick}</Text>
                     <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>{`${convertDateToDayMonthYearVietNam(payloadData.detailAppointment?.appointment_date)}`}</Text>
                     <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between', width: '100%', alignItems: 'center', gap: 5, padding: 5, borderRadius: 5 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'start', gap: 5, width: '50%' }}>
                             <View style={{
                                 height: 60,
                                 width: 60,
@@ -148,7 +147,7 @@ const DetailAppointment = () => {
                                     : payloadData.detailAppointment?.patient?.phone}</Text>
                             </View>
                         </View>
-                        <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+                        <View style={{ flexDirection: 'column', alignItems: 'flex-end', width: '50%' }}>
                             <Text style={{ fontFamily: 'Nunito-S', fontSize: 14, color: color[payloadData.detailAppointment?.status] }}>{status[payloadData.detailAppointment?.status]}</Text>
                             <Text style={{ fontFamily: 'Nunito-R', fontSize: 14 }}>{payloadData.detailAppointment?.status === "ACCEPTED"
                                 ? calculateDetailedTimeDifference(
@@ -177,12 +176,12 @@ const DetailAppointment = () => {
                         <Text style={{ fontFamily: 'Nunito-R', fontSize: 16, marginTop: 3 }}>{payloadData.detailAppointment?.bloodPressure === '' ? 'Không có' : payloadData.detailAppointment?.bloodPressure}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start', paddingHorizontal: 10, marginTop: 5 }}>
-                        <Text style={{ fontFamily: 'Nunito-S', fontSize: 18, marginTop: 3 }}>Lịch sử khám: </Text>
+                        <Text style={{ fontFamily: 'Nunito-S', fontSize: 18, marginTop: 3 }}>Lịch sử khám của bệnh nhân: </Text>
                     </View>
                     <ScrollView style={{ height: '50%', marginTop: 5, width: '100%', paddingHorizontal: 10 }}>
                         {medicalRecords.map(
                             (medicalRecord, index) => (
-                                <View key={index} style={{ marginTop: 10, backgroundColor: '#f8f9f9', padding: 5, borderRadius: 10, flexDirection: 'row', gap: 10, alignItems: 'start' }}>
+                                <View key={index} style={{ marginTop: 10, backgroundColor: '#f8f9f9', padding: 5, borderRadius: 10, flexDirection: 'row', gap: 10, alignItems: 'start', width: '100%' }}>
                                     <View style={{
                                         height: 60,
                                         width: 60,
@@ -201,19 +200,19 @@ const DetailAppointment = () => {
                                             }}
                                         />
                                     </View>
-                                    <View style={{ flexDirection: 'column', marginTop: 5 }}>
-                                        <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>BS. {medicalRecord.doctor?.fullName}</Text>
-                                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3 }}>Thời gian: {medicalRecord.date?.day}-{" "}{medicalRecord.date?.month}-{" "}{medicalRecord.date?.year}</Text>
-                                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3 }}>Triệu chứng: {medicalRecord.symptoms === '' ? 'Không có' : medicalRecord.symptoms}</Text>
-                                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3 }}>Chuẩn đoán: {medicalRecord.diagnosisDisease === '' ? 'Không có' : medicalRecord.diagnosisDisease}</Text>
-                                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3 }}>Thuốc: {medicalRecord.medical.map((medicine) => medicine.medicalName).join(", ")}</Text>
-                                        <Text Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3 }}>Ghi chú: {medicalRecord.note === '' ? 'Không có' : medicalRecord.note}</Text>
+                                    <View style={{ flexDirection: 'column', marginTop: 5, width: '100%' }}>
+                                        <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3, width: '80%' }}>BS. {medicalRecord.doctor?.fullName}</Text>
+                                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3, width: '80%' }}>Thời gian: {medicalRecord.date?.day}-{" "}{medicalRecord.date?.month}-{" "}{medicalRecord.date?.year}</Text>
+                                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3, width: '80%' }}>Triệu chứng: {medicalRecord.symptoms === '' ? 'Không có' : medicalRecord.symptoms}</Text>
+                                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3, width: '80%' }}>Chuẩn đoán: {medicalRecord.diagnosisDisease === '' ? 'Không có' : medicalRecord.diagnosisDisease}</Text>
+                                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3, width: '80%' }}>Thuốc: {medicalRecord.medical.map((medicine) => medicine.medicalName).join(", ")}</Text>
+                                        <Text Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3, width: '80%' }}>Ghi chú: {medicalRecord.note === '' ? 'Không có' : medicalRecord.note}</Text>
                                     </View>
                                 </View>
                             )
                         )}
                     </ScrollView>
-                    {(payloadData.displayConnect === payloadData.detailAppointment?._id && userData.user?.role === 'USER') && (
+                    {(payloadData.displayConnect !== payloadData.detailAppointment?._id && userData.user?.role === 'USER') && (
                         <TouchableOpacity onPress={() => handleGoToMeet()} style={{ borderRadius: 5, backgroundColor: '#1dcbb6', paddingVertical: 11, marginTop: 12, paddingHorizontal: 20 }}>
                             <Text style={{ color: 'white', fontFamily: 'Nunito-B' }}>Tham Gia Cuộc Hẹn</Text>
                         </TouchableOpacity>

@@ -7,6 +7,8 @@ import { api, TypeHTTP } from '../utils/api';
 import { dataContext } from '../contexts/DataContext';
 import { screenContext } from '../contexts/ScreenContext';
 import { userContext } from '../contexts/UserContext';
+import Icon from 'react-native-vector-icons/AntDesign';
+import Icon1 from 'react-native-vector-icons/FontAwesome5';
 
 const LandingScreen = () => {
     const { width } = Dimensions.get('window');
@@ -15,19 +17,19 @@ const LandingScreen = () => {
     const { userData } = useContext(userContext)
 
     return (
-        <ScrollView style={{ flexDirection: 'column', paddingHorizontal: 10, width, paddingVertical: 10, gap: 10 }}>
+        <ScrollView style={{ flexDirection: 'column', paddingHorizontal: 10, width, paddingVertical: 10, gap: 10, paddingBottom: 20 }}>
             <View style={{ width: '100%', overflow: 'hidden', position: 'relative', flexDirection: 'row', height: 180, backgroundColor: '#1dcbb6', borderRadius: 8, paddingVertical: 10 }}>
                 <View style={{ width: '50%', paddingHorizontal: 12, flexDirection: 'column', justifyContent: 'center' }}>
                     <Text style={{ fontSize: 15, fontFamily: 'Nunito-B', color: 'white', lineHeight: 20 }}>Tham khảo ý kiến sức khỏe về bệnh tim mạch tại HealthHaven.</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
-                        <TouchableOpacity style={{ borderRadius: 5, backgroundColor: 'white', paddingVertical: 8, paddingHorizontal: 15 }}>
+                        <TouchableOpacity onPress={() => screenHandler.navigate('doctors')} style={{ borderRadius: 5, backgroundColor: 'white', paddingVertical: 8, paddingHorizontal: 15 }}>
                             <Text style={{ color: 'black', fontFamily: 'Nunito-B', fontSize: 13 }}>Đặt Khám Ngay</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
                 <Image source={Family} style={{ width: 210, height: 160, position: 'absolute', bottom: 0, right: 0 }} />
             </View>
-            <ScrollView horizontal={true} style={{ width: '100%', flexDirection: 'row', paddingTop: 10, height: 240, borderRadius: 8, paddingVertical: 10 }}>
+            <ScrollView horizontal={true} style={{ width: '100%', flexDirection: 'row', paddingTop: 10, height: 270, borderRadius: 8, paddingVertical: 10 }}>
                 {data.doctorRecords.map((doctorRecord, index) => (
                     <TouchableOpacity
                         key={index}
@@ -71,6 +73,16 @@ const LandingScreen = () => {
                                 }}
                             />
                         </View>
+                        <View style={{ flexDirection: 'row', marginVertical: 6, gap: 10 }}>
+                            <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+                                <Icon1 name='calendar-day' style={{ fontSize: 20, color: '#1dcbb6' }} />
+                                <Text style={{ fontSize: 16, fontWeight: 500 }}>{doctorRecord?.examination_call}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+                                <Icon name='star' style={{ fontSize: 20, color: '#1dcbb6' }} />
+                                <Text style={{ fontSize: 16, fontWeight: 500 }}>{doctorRecord?.assessment.toFixed(1)}</Text>
+                            </View>
+                        </View>
                         <Text style={{ fontSize: 15, marginTop: 10, fontFamily: 'Nunito-B', lineHeight: 20, textAlign: 'center' }}>BS {doctorRecord?.doctor?.fullName}</Text>
                         <Text style={{ fontFamily: 'Nunito-R' }} >{doctorRecord?.doctor.specialize}</Text>
                     </TouchableOpacity>
@@ -84,7 +96,7 @@ const LandingScreen = () => {
                 </View>
                 <Image source={Heart} style={{ width: '35%', aspectRatio: 1 }} />
             </View>
-            <ScrollView horizontal={true} style={{ width: '100%', flexDirection: 'row', paddingTop: 10, borderRadius: 8, paddingVertical: 10 }}>
+            <ScrollView horizontal={true} style={{ width: '100%', flexDirection: 'row', borderRadius: 8, paddingVertical: 10 }}>
                 {data.sicks.map((sick, index) => (
                     <TouchableOpacity
                         key={index}

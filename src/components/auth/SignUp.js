@@ -75,6 +75,28 @@ const SignUp = () => {
             utilsHandler.notify(notifyType.WARNING, "Hãy nhập OTP trước khi xác nhận");
             return;
         }
+        setTimeout(() => {
+            let user = { ...userData.user, processSignup: 2 };
+            api({
+                type: TypeHTTP.POST,
+                body: { ...user },
+                path: `/auth/update`,
+                sendToken: false,
+            })
+                .then((res) => {
+                    userHandler.setUser(res);
+                    utilsHandler.notify(
+                        notifyType.SUCCESS,
+                        "Xác Thực Tài Khoản Thành Công"
+                    );
+                })
+                .catch(() => {
+                    utilsHandler.notify(
+                        notifyType.FAIL,
+                        "Xác minh thất bại, Vui lòng thử lại"
+                    );
+                });
+        }, 1000);
 
     };
 

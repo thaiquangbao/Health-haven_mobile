@@ -19,7 +19,7 @@ const ChoosePayment = ({ setStep }) => {
     useEffect(() => {
         if (payloadData.bookingHealth && userData.user?._id) {
             console.log(userData.user?._id, payloadData.bookingHealth?.priceList.price)
-            setUrl(`https://qr.sepay.vn/img?bank=MBBank&acc=0834885704&template=compact&amount=${payloadData.bookingHealth?.priceList.price}&des=MaKH${userData.user?._id}`)
+            setUrl(`https://qr.sepay.vn/img?bank=MBBank&acc=0834885704&template=compact&amount=${payloadData.bookingHealth?.priceList.price}&des=MaKH${userData.user?._id}2b`)
         }
     }, [payloadData.bookingHealth, userData.user?._id])
 

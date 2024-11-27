@@ -63,7 +63,7 @@ const MenuArea = () => {
                 paddingRight: 10
             }}
         >
-            <TouchableOpacity onPress={() => menuHandler.setDisplay(false)}>
+            <TouchableOpacity onPress={() => menuHandler.setDisplay(false)} style={{ zIndex: 10 }}>
                 <Icon name="x" style={{ fontSize: 30, position: 'absolute', right: 10, top: 10 }} />
             </TouchableOpacity>
 
@@ -150,10 +150,6 @@ const MenuArea = () => {
             </>)}
 
             {userData.user?.role === 'USER' && (<>
-                <TouchableOpacity onPress={() => { menuHandler.setDisplay(false); menuHandler.setDisplaySmartSearching(true) }} style={{ width: '100%', gap: 10, flexDirection: 'row', alignItems: 'center' }}>
-                    <Icon name='search' style={{ fontSize: 30, color: '#ff3359' }} />
-                    <Text style={{ fontFamily: 'Nunito-S', fontSize: 17 }}>Tìm Kiếm Thông Minh</Text>
-                </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigate('medical-record')} style={{ width: '100%', gap: 10, flexDirection: 'row', alignItems: 'center' }}>
                     <Icon5 name='file-document' style={{ fontSize: 30, color: '#ff3359' }} />
                     <Text style={{ fontFamily: 'Nunito-S', fontSize: 17 }}>Hồ Sơ Sức Khỏe</Text>
@@ -182,6 +178,10 @@ const MenuArea = () => {
                     <Text style={{ fontFamily: 'Nunito-S', fontSize: 17 }}>HealthHaven ChatBot</Text>
                 </TouchableOpacity>
             </>)}
+            <TouchableOpacity onPress={() => { menuHandler.setDisplay(false); menuHandler.setDisplaySmartSearching(true) }} style={{ width: '100%', gap: 10, flexDirection: 'row', alignItems: 'center' }}>
+                <Icon name='search' style={{ fontSize: 30, color: '#ff3359' }} />
+                <Text style={{ fontFamily: 'Nunito-S', fontSize: 17 }}>Tìm Kiếm Thông Minh</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity onPress={() => navigate('forums')} style={{ width: '100%', gap: 10, flexDirection: 'row', alignItems: 'center' }}>
                 <Icon1 name='message' style={{ fontSize: 30, color: '#fb3997' }} />
@@ -202,10 +202,6 @@ const MenuArea = () => {
                 </View>
             ) : (
                 <>
-                    <TouchableOpacity onPress={() => navigate('notify')} style={{ width: '100%', gap: 10, flexDirection: 'row', alignItems: 'center' }}>
-                        <Icon8 name='bell' style={{ fontSize: 30, color: 'black' }} />
-                        <Text style={{ fontFamily: 'Nunito-S', fontSize: 17 }}>Thông báo</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => handleLogout()} style={{ width: '100%', gap: 10, flexDirection: 'row', alignItems: 'center' }}>
                         <Icon4 name='logout' style={{ fontSize: 30, color: 'black' }} />
                         <Text style={{ fontFamily: 'Nunito-S', fontSize: 17 }}>Đăng Xuất</Text>

@@ -89,8 +89,8 @@ const ChatBot = () => {
                 </View>
                 <ScrollView onContentSizeChange={() => {
                     messageRef.current.scrollToEnd({ animated: true });
-                }} ref={messageRef} style={{ flexDirection: 'column', width: '100%', height: 500, marginTop: 10 }}>
-                    <View style={{ flexDirection: 'column', width: '100%', height: '100%', justifyContent: 'center' }}>
+                }} ref={messageRef} style={{ flexDirection: 'column', width: '100%', marginTop: 10 }}>
+                    <View style={{ flexDirection: 'column', width: '100%', justifyContent: 'center' }}>
                         {messages.map((item, index) => (
                             <View key={index} style={{ width: '100%', flexDirection: 'column', borderRadius: 5, alignItems: item.sender === 'chatbot' ? 'flex-start' : 'flex-end', justifyContent: 'center', marginTop: 10 }}>
                                 <View key={index} style={{ flexDirection: 'column', maxWidth: '70%', borderRadius: 5, paddingVertical: 8, paddingHorizontal: 3, alignItems: 'flex-start', backgroundColor: '#f5f5f5', justifyContent: 'center' }}>
@@ -100,7 +100,7 @@ const ChatBot = () => {
                         ))}
                     </View>
                 </ScrollView>
-                <View style={{ flexDirection: 'row', zIndex: 1, marginTop: 20, justifyContent: 'center', width: '100%', backgroundColor: 'white', paddingVertical: 10, bottom: 10, alignItems: 'center', gap: 10, position: 'absolute' }}>
+                <View style={{ flexDirection: 'row', zIndex: 1, marginTop: 20, justifyContent: 'center', width: '100%', backgroundColor: 'white', paddingVertical: 10, bottom: 10, alignItems: 'center', gap: 10, }}>
                     <TextInput value={message} onChangeText={e => setMessage(e)} placeholder='Soạn Tin Nhắn' style={{ width: '90%', borderWidth: 1, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 5, borderColor: '#e5e7e9', height: 45 }} />
                     <TouchableOpacity onPress={() => handleSendMessage()}>
                         <Icon3 name='send' style={{ fontSize: 27, zIndex: 2, color: '#999' }} />

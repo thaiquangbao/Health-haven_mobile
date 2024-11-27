@@ -16,6 +16,7 @@ import Index from "./src/screens";
 import DataProvider from "./src/contexts/DataContext";
 import PayLoadProvider from "./src/contexts/PayloadContext";
 import BookingHomeProvider from "./src/contexts/BookingHomeContext";
+import MyApp from "./MyApp";
 
 export default function App() {
   const [reload, setReload] = useState(false)
@@ -32,22 +33,7 @@ export default function App() {
     <>
       {fontsLoaded ? (
         <UtilsProvider>
-          <PayLoadProvider>
-            <UserProvider>
-              <ScreenProvider>
-                <AuthProvider>
-                  <MenuProvider>
-                    <DataProvider>
-                      <BookingHomeProvider>
-                        <Menu />
-                        <Index />
-                      </BookingHomeProvider>
-                    </DataProvider>
-                  </MenuProvider>
-                </AuthProvider>
-              </ScreenProvider>
-            </UserProvider>
-          </PayLoadProvider>
+          <MyApp />
         </UtilsProvider>
       ) : (
         <ActivityIndicator size="large" color="#0000ff" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />

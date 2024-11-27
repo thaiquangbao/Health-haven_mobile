@@ -21,7 +21,7 @@ const ChoosePayment = ({ setStep }) => {
     const { menuHandler } = useContext(menuContext)
     useEffect(() => {
         if (payloadData.bookingHome) {
-            setUrl(`https://qr.sepay.vn/img?bank=MBBank&acc=0834885704&template=compact&amount=${payloadData.bookingHome?.price_list.price}&des=MaKH${userData.user?._id}`)
+            setUrl(`https://qr.sepay.vn/img?bank=MBBank&acc=0834885704&template=compact&amount=${payloadData.bookingHome?.price_list.price}&des=MaKH${userData.user?._id}2b`)
         }
     }, [payloadData.bookingHome, userData.user?._id])
 
@@ -73,7 +73,7 @@ const ChoosePayment = ({ setStep }) => {
                 </View>
             </View>
 
-            <View style={{ flexDirection: 'column', gap: 10, borderRadius: 5, width: '85%', borderWidth: 1, borderColor: '#cacfd2', marginTop: 10 }}>
+            <View style={{ flexDirection: 'column', gap: 10, borderRadius: 5, width: '85%', borderWidth: 1, borderColor: '#cacfd2', marginTop: 10, overflow: 'hidden' }}>
                 <View style={{ alignItems: 'start', flexDirection: 'row', gap: 15, borderRadius: 5, width: '100%', borderBottomWidth: 1, borderColor: '#cacfd2', paddingHorizontal: 20, paddingVertical: 10 }}>
                     <View style={{
                         height: 55,
@@ -92,7 +92,7 @@ const ChoosePayment = ({ setStep }) => {
                         />
                     </View>
                     <View style={{ flexDirection: 'column', gap: 1, alignItems: 'flex-start' }}>
-                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 15, width: '65%' }}>Dịch vụ khám sức khỏe tại nhà với bác sĩ {payloadData.bookingHome?.doctor.fullName}</Text>
+                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 15, width: '60%' }}>Dịch vụ khám sức khỏe tại nhà với bác sĩ {payloadData.bookingHome?.doctor.fullName}</Text>
                         <Text style={{ fontFamily: 'Nunito-B', fontSize: 15 }}>{payloadData.bookingHome?.doctor.fullName}</Text>
                         <Text style={{ fontFamily: 'Nunito-S', fontSize: 13, paddingHorizontal: 10, paddingVertical: 5, backgroundColor: '#e0eff6', borderRadius: 5, marginVertical: 2 }}>{payloadData.bookingHome?.doctor.specialize}</Text>
                         <Text style={{ fontFamily: 'Nunito-S', fontSize: 15 }}>{formatMoney(payloadData.bookingHome?.price_list.price)} đ</Text>
@@ -111,9 +111,9 @@ const ChoosePayment = ({ setStep }) => {
                 </View>
             </View>
 
-            {/* <TouchableOpacity onPress={() => setStep(2)} style={{ borderRadius: 5, marginTop: 10, backgroundColor: '#1dcbb6', height: 45, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 15 }}>
+            <TouchableOpacity onPress={() => handleSubmit()} style={{ borderRadius: 5, marginTop: 10, backgroundColor: '#1dcbb6', height: 45, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 15 }}>
                 <Text style={{ color: 'white', fontFamily: 'Nunito-B' }}>Bước Tiếp Theo</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
         </View>
     )
 }

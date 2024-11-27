@@ -1,8 +1,10 @@
-import { createContext } from "react";
+import { createContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
 export const utilsContext = createContext()
 
 const UtilsProvider = ({ children }) => {
+
+    const [reload, setReload] = useState(false)
 
     const notify = (title, message, onCancel, onOK) => {
         Alert.alert(
@@ -23,12 +25,21 @@ const UtilsProvider = ({ children }) => {
         );
     };
 
-    const data = {
+    useEffect(() => {
+        if (reload === true) {
+            setTimeout(() => {
+                setReload(false)
+            }, 50);
+        }
+    }, [reload])
 
+    const data = {
+        reload
     }
 
     const handler = {
-        notify
+        notify,
+        setReload
     }
 
     return (

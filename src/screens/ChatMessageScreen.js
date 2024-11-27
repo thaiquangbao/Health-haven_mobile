@@ -33,7 +33,7 @@ const ChatMessageScreen = () => {
                 {screenData.currentScreen === 9 && (<>
                     <View style={{ flexDirection: 'row', width: '100%', gap: 10, alignItems: 'center' }}>
                         {userData.user?.role === 'USER' ? (
-                            <Image source={{ uri: userData.user?.image }} style={{ width: 50, height: 50 }} />
+                            <Image source={{ uri: userData.user?.image }} style={{ width: 50, height: 50, borderRadius: 50 }} />
                         ) : (
                             <View style={{
                                 height: 50,

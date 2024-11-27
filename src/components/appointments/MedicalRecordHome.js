@@ -9,12 +9,12 @@ import IconX from 'react-native-vector-icons/Feather';
 import { notifyType } from '../../utils/notify';
 import { api, TypeHTTP } from '../../utils/api';
 import { convertDateToDayMonthYearObject } from '../../utils/date';
+import Icon from 'react-native-vector-icons/Feather';
 
 const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setMedicalRecord }) => {
     const { userData } = useContext(userContext)
     const { payloadData } = useContext(payloadContext)
     const { width, height } = Dimensions.get('window');
-    const [date, setDate] = useState(new Date());
     const [showPicker, setShowPicker] = useState(false);
     const [medical, setMedical] = useState([]);
     const [nameMedical, setNameMedical] = useState("");
@@ -24,10 +24,11 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
     const [diagnosisDisease, setDiagnosisDisease] = useState("");
     const [symptoms, setSymptoms] = useState("");
     const [note, setNote] = useState("");
-    const [reAppointmentDate, setReAppointmentDate] = useState(new Date());
+    const [date, setDate] = useState(new Date())
+    const [reAppointmentDate, setReAppointmentDate] = useState();
     const [temperature, setTemperature] = useState(0);
     const [bloodPressure, setBloodPressure] = useState("");
-    const [heartRate, setHeartRate] = useState("");
+    const [healthRate, setHealthRate] = useState("");
     const [weight, setWeight] = useState(0);
     const [height1, setHeight1] = useState(0);
     const [unit, setUnit] = useState('1')
@@ -42,6 +43,14 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
     };
 
     const addMedical = () => {
+        if (nameMedical === '') {
+            utilsHandler.notify(notifyType.WARNING, "Vui lòng nhập tên thuốc")
+            return
+        }
+        if (quantity === '') {
+            utilsHandler.notify(notifyType.WARNING, "Vui lòng nhập số lượng")
+            return
+        }
         const newMedical = {
             medicalName: nameMedical,
             quantity: Number(quantity),
@@ -57,17 +66,21 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
             ? reAppointmentDate.split("-")
             : [];
         // chổ này cần check xem có nhập đủ thông tin không
-        if (diagnosisDisease === "") {
-            utilsHandler.notify(notifyType.WARNING, "Chưa nhập chẩn đoán bệnh")
-        }
         if (symptoms === "") {
             utilsHandler.notify(notifyType.WARNING, "Chưa nhập triệu chứng")
+            return
+        }
+        if (diagnosisDisease === "") {
+            utilsHandler.notify(notifyType.WARNING, "Chưa nhập chẩn đoán bệnh")
+            return
         }
         if (note === "") {
             utilsHandler.notify(notifyType.WARNING, "Chưa nhập ghi chú")
+            return
         }
         if (medical.length === 0) {
             utilsHandler.notify(notifyType.WARNING, "Chưa nhập đơn thuốc")
+            return
         }
         const body = {
             patient: payloadData.appointmentHome?.patient?._id,
@@ -82,9 +95,9 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
             },
             temperature: temperature,
             bloodPressure: bloodPressure,
-            heartRate: heartRate,
+            healthRate: healthRate,
             weight: weight,
-            height: height,
+            height: height1,
             medical: medical,
             appointment: payloadData.appointmentHome?._id,
             date: payloadData.appointmentHome?.appointment_date,
@@ -115,21 +128,20 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
             setDiagnosisDisease(medicalRecord.diagnosisDisease)
             setSymptoms(medicalRecord.symptoms)
             setNote(medicalRecord.note)
-            setReAppointmentDate(`${medicalRecord.reExaminationDate.year}-${medicalRecord.reExaminationDate.month}-${medicalRecord.reExaminationDate.day}`)
+            setReAppointmentDate()
             setTemperature(medicalRecord.temperature + '')
             setBloodPressure(medicalRecord.bloodPressure)
-            setHeartRate(medicalRecord.healthRate + '')
+            setHealthRate(medicalRecord.healthRate + '')
             setWeight(medicalRecord.weight + '')
             setHeight1(medicalRecord.height + '')
-            setDate(new Date(`${medicalRecord.reExaminationDate.year}-${medicalRecord.reExaminationDate.month}-${medicalRecord.reExaminationDate.day}`))
+            setDate(new Date())
         }
     }, [medicalRecord])
-
 
     return (
         <ScrollView style={{ width: width, flexDirection: 'column', paddingHorizontal: 20, gap: 5, position: 'relative' }}>
             {display && (
-                <View style={{ width, height, justifyContent: 'center', position: 'absolute', top: 0, left: 0, alignItems: 'center', flexDirection: 'row', zIndex: 2, backgroundColor: '#e7e7e7b5' }}>
+                <View style={{ width, height, justifyContent: 'center', position: 'absolute', top: -10, left: -20, alignItems: 'center', flexDirection: 'row', zIndex: 50, backgroundColor: '#e7e7e7b5' }}>
                     <View style={{ width: '80%', position: 'absolute', backgroundColor: 'white', borderRadius: 10, zIndex: 4, paddingHorizontal: 20, paddingVertical: 20 }}>
                         <TouchableOpacity style={{ alignItems: 'flex-end', position: 'absolute', top: 5, right: 5 }} onPress={() => setDisplay(false)}>
                             <IconX name="x" style={{ fontSize: 20 }} />
@@ -166,12 +178,11 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
                         value={date}
                         onChange={({ type }, selectedDate) => {
                             if (type === "set") {
-                                setReAppointmentDate(`${selectedDate.getFullYear()}-${selectedDate.getMonth()}-${selectedDate.getDay()}`)
+                                setReAppointmentDate(`${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`)
                                 setDate(selectedDate)
                                 if (Platform.OS === 'android') {
-                                    setReAppointmentDate(`${selectedDate.getFullYear()}-${selectedDate.getMonth()}-${selectedDate.getDay()}`)
+                                    setReAppointmentDate(`${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`)
                                     setShowPicker(false)
-                                    setDate(selectedDate)
                                 }
                             } else {
                                 setShowPicker(false)
@@ -240,7 +251,7 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
                         <TextInput value={symptoms} onChangeText={e => setSymptoms(e)} placeholder='Triệu chứng' style={{ color: 'black', marginTop: 5, height: 48, zIndex: 1, width: '95%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
                         <View style={{ width: '95%', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <TextInput value={bloodPressure} onChangeText={e => setBloodPressure(e)} placeholder='Huyết Áp' style={{ color: 'black', marginTop: 5, height: 48, zIndex: 1, width: '48%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
-                            <TextInput value={heartRate} onChangeText={e => setHeartRate(e)} placeholder='Nhịp Tim' style={{ color: 'black', marginTop: 5, height: 48, zIndex: 1, width: '49%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
+                            <TextInput value={healthRate} onChangeText={e => setHealthRate(e)} placeholder='Nhịp Tim' style={{ color: 'black', marginTop: 5, height: 48, zIndex: 1, width: '49%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
                         </View>
                         <View style={{ width: '95%', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <TextInput value={weight} onChangeText={e => setWeight(e)} placeholder='Cân Nặng' style={{ color: 'black', marginTop: 5, height: 48, zIndex: 1, width: '48%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
@@ -253,7 +264,7 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
                             <Text style={{ width: '40%', fontSize: 16, fontWeight: 600 }}>Ngày Tái Khám: </Text>
                             <TouchableOpacity style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15, fontSize: 16, backgroundColor: 'white', borderRadius: 7, width: '60%', borderColor: '#bbb', height: 48, borderWidth: 1 }} onPress={() => setShowPicker(true)}>
                                 <Text style={{ color: '#999' }}>
-                                    {date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()}
+                                    {reAppointmentDate ? reAppointmentDate.split('-')[2] + "/" + reAppointmentDate.split('-')[1] + "/" + reAppointmentDate.split('-')[0] : 'dd/mm/yyyy'}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -279,7 +290,12 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
                                 {medical.map((item, index) => (
                                     <View style={{ flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 15, borderRadius: 8, backgroundColor: '#f1f1f1', gap: 10, justifyContent: 'space-between' }} key={index}>
                                         <Text>{item.medicalName}</Text>
-                                        <Text>{item.quantity} {item.unitOfCalculation}</Text>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                                            <Text>{item.quantity} {item.unitOfCalculation}</Text>
+                                            <TouchableOpacity onPress={() => setMedical(prev => prev.filter(item1 => item1.medicalName === item.medicalName))}>
+                                                <Icon name="x" style={{ fontSize: 30 }} />
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
                                 ))}
                             </View>
@@ -294,7 +310,7 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
                         <TextInput editable={false} value={symptoms} onChangeText={e => setSymptoms(e)} placeholder='Triệu chứng' style={{ color: 'black', marginTop: 5, height: 48, zIndex: 1, width: '95%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
                         <View style={{ width: '95%', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <TextInput editable={false} value={bloodPressure} onChangeText={e => setBloodPressure(e)} placeholder='Huyết Áp' style={{ color: 'black', marginTop: 5, height: 48, zIndex: 1, width: '48%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
-                            <TextInput editable={false} value={heartRate} onChangeText={e => setHeartRate(e)} placeholder='Nhịp Tim' style={{ color: 'black', marginTop: 5, height: 48, zIndex: 1, width: '49%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
+                            <TextInput editable={false} value={healthRate} onChangeText={e => setHealthRate(e)} placeholder='Nhịp Tim' style={{ color: 'black', marginTop: 5, height: 48, zIndex: 1, width: '49%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
                         </View>
                         <View style={{ width: '95%', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <TextInput editable={false} value={weight} onChangeText={e => setWeight(e)} placeholder='Cân Nặng' style={{ color: 'black', marginTop: 5, height: 48, zIndex: 1, width: '48%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
@@ -307,7 +323,7 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
                             <Text style={{ width: '40%', fontSize: 16, fontWeight: 600 }}>Ngày Tái Khám: </Text>
                             <TouchableOpacity style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15, fontSize: 16, backgroundColor: 'white', borderRadius: 7, width: '60%', borderColor: '#bbb', height: 48, borderWidth: 1 }} onPress={() => setShowPicker(true)}>
                                 <Text style={{ color: '#999' }}>
-                                    {date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()}
+                                    {reAppointmentDate ? reAppointmentDate.split('-')[2] + "/" + reAppointmentDate.split('-')[1] + "/" + reAppointmentDate.split('-')[0] : 'dd/mm/yyyy'}
                                 </Text>
                             </TouchableOpacity>
                         </View>
