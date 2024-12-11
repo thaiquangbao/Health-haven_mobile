@@ -1,7 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Animated, Dimensions, View, Text, TouchableOpacity, Image, TextInput } from 'react-native';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { Animated, Dimensions, View, Text, TouchableOpacity, Image, TextInput, ScrollView } from 'react-native';
 import { menuContext } from '../../contexts/MenuContext';
 import Icon from 'react-native-vector-icons/Feather';
+import Icon1 from 'react-native-vector-icons/Ionicons';
 import Sign from '../../../assets/sign.png'
 import Logo from '../../../assets/logo.png'
 import { utilsContext } from '../../contexts/UtilsContext';
@@ -20,6 +21,14 @@ const SignIn = () => {
         userName: '',
         passWord: ''
     })
+    const [step, setStep] = useState(0)
+    const scrollViewRef = useRef(null);
+
+    //  forgot password
+    const [phone, setPhone] = useState('')
+    const [otp, setOtp] = useState('')
+    const [newPass, setNewPass] = useState('')
+    const [confirmNewPass, setConfirmNewPass] = useState('')
 
     useEffect(() => {
         Animated.timing(translateX, {
@@ -28,6 +37,12 @@ const SignIn = () => {
             useNativeDriver: true, // Sử dụng Native Driver cho hiệu suất tốt hơn
         }).start();
     }, [menuData.displaySignIn]);
+
+    useEffect(() => {
+        if (scrollViewRef.current) {
+            scrollViewRef.current.scrollTo({ x: step * width, animated: true });
+        }
+    }, [step])
 
     const handleSignIn = () => {
         if (!/^0[0-9]{9}$/.test(info.userName)) {
@@ -63,6 +78,54 @@ const SignIn = () => {
             })
     }
 
+    const handleCheckAuth = () => {
+        if (!/^0[0-9]{9}$/.test(phone)) {
+            utilsHandler.notify(notifyType.WARNING, "Số điện thoại không hợp lệ")
+            return
+        }
+        api({ path: '/auth/check-auth', type: TypeHTTP.POST, body: { phone } })
+            .then(res => {
+                setStep(2)
+            }).catch(error => {
+                utilsHandler.notify(notifyType.WARNING, "Số điện thoại không tồn tại")
+            })
+    }
+
+    const handleSubmitOTPWithPhoneNumber = () => {
+        if (otp === '') {
+            utilsHandler.notify(notifyType.WARNING, "Vui lòng nhập mã xác minh")
+            return
+        }
+        setTimeout(() => {
+            setStep(3)
+            utilsHandler.notify(
+                notifyType.SUCCESS,
+                "Xác Thực Tài Khoản Thành Công"
+            );
+        }, 1000);
+    }
+
+    const handleSubmitChangePassword = () => {
+        if (newPass.length < 6) {
+            utilsHandler.notify(notifyType.WARNING, "Mật khẩu phải lớn hơn 6 ký tự")
+            return
+        }
+        if (newPass !== confirmNewPass) {
+            utilsHandler.notify(notifyType.WARNING, "Mật khẩu xác nhận phải trùng khớp với mật khẩu")
+            return
+        }
+
+        api({ path: '/auth/take-password/patient', type: TypeHTTP.POST, body: { phone, newPassWord: newPass } })
+            .then(res => {
+                utilsHandler.notify(notifyType.SUCCESS, "Đổi mật khẩu thành công")
+                setStep(0)
+                setPhone('')
+                setOtp('')
+                setConfirmNewPass('')
+                setNewPass('')
+            })
+    }
+
     return (
         <Animated.View
             style={{
@@ -79,29 +142,69 @@ const SignIn = () => {
                 right: 0,
             }}
         >
-            <View style={{ position: 'absolute', right: 15, top: 30 }}>
+            <View style={{ position: 'absolute', right: 15, top: 30, zIndex: 1 }}>
                 <TouchableOpacity onPress={() => menuHandler.setDisplaySignIn(false)}>
                     <Icon name="x" style={{ fontSize: 30 }} />
                 </TouchableOpacity>
             </View>
-            <View style={{ width: '100%', flexDirection: 'column', alignItems: 'center' }}>
-                <Image source={Logo} style={{ width: 300, height: 300, marginTop: '20%' }} />
-                <Text style={{ fontFamily: 'Nunito-B', fontSize: 22 }}>Đăng Nhập Tài Khoản</Text>
-                <TextInput value={info.userName} onChangeText={e => setInfo({ ...info, userName: e })} placeholder='Số Điện Thoại (+84)' style={{ color: 'black', marginTop: 20, height: 48, zIndex: 1, width: '75%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
-                <TextInput value={info.passWord} onChangeText={e => setInfo({ ...info, passWord: e })} secureTextEntry={true} placeholder='Mật Khẩu' style={{ color: 'black', marginTop: 10, height: 48, zIndex: 1, width: '75%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
-                <TouchableOpacity style={{ marginVertical: 10, width: '75%' }}>
-                    <Text style={{ fontFamily: 'Nunito-S', fontSize: 13, }}>Quên Mật Khẩu</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleSignIn()} style={{ borderRadius: 5, backgroundColor: '#1dcbb6', height: 45, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '75%' }}>
-                    <Text style={{ color: 'white', fontFamily: 'Nunito-B' }}>Đăng Nhập</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
-                    menuHandler.setDisplaySignIn(false)
-                    menuHandler.setDisplaySignUp(true)
-                }} style={{ marginVertical: 15 }}>
-                    <Text style={{ fontFamily: 'Nunito-S', fontSize: 14, }}>Chưa có tài khoản?</Text>
-                </TouchableOpacity>
-            </View>
+            {step !== 0 && (
+                <View style={{ position: 'absolute', left: 15, top: 30, zIndex: 1 }}>
+                    <TouchableOpacity onPress={() => setStep(prev => prev - 1)} style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                        <Icon1 name="arrow-back" style={{ fontSize: 25 }} />
+                        <Text style={{ fontSize: 16, fontFamily: 'Nunito-S' }}>Quay Về</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+            <ScrollView
+                horizontal
+                ref={scrollViewRef}
+                scrollEnabled={false}
+                style={{ flexDirection: 'row', position: 'relative' }}
+            >
+                <View style={{ width, flexDirection: 'column', alignItems: 'center' }}>
+                    <Image source={Logo} style={{ width: 300, height: 300, marginTop: '20%' }} />
+                    <Text style={{ fontFamily: 'Nunito-B', fontSize: 22 }}>Đăng Nhập Tài Khoản</Text>
+                    <TextInput value={info.userName} onChangeText={e => setInfo({ ...info, userName: e })} placeholder='Số Điện Thoại (+84)' style={{ color: 'black', marginTop: 20, height: 48, zIndex: 1, width: '75%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
+                    <TextInput value={info.passWord} onChangeText={e => setInfo({ ...info, passWord: e })} secureTextEntry={true} placeholder='Mật Khẩu' style={{ color: 'black', marginTop: 10, height: 48, zIndex: 1, width: '75%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
+                    <TouchableOpacity onPress={() => setStep(1)} style={{ marginVertical: 10, width: '75%' }}>
+                        <Text style={{ fontFamily: 'Nunito-S', fontSize: 13, }}>Quên Mật Khẩu</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleSignIn()} style={{ borderRadius: 5, backgroundColor: '#1dcbb6', height: 45, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '75%' }}>
+                        <Text style={{ color: 'white', fontFamily: 'Nunito-B' }}>Đăng Nhập</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => {
+                        menuHandler.setDisplaySignIn(false)
+                        menuHandler.setDisplaySignUp(true)
+                    }} style={{ marginVertical: 15 }}>
+                        <Text style={{ fontFamily: 'Nunito-S', fontSize: 14, }}>Chưa có tài khoản?</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ width, flexDirection: 'column', alignItems: 'center' }}>
+                    <Image source={Logo} style={{ width: 300, height: 300, marginTop: '20%' }} />
+                    <Text style={{ fontFamily: 'Nunito-B', fontSize: 22 }}>Quên Mật Khẩu</Text>
+                    <TextInput value={phone} onChangeText={e => setPhone(e)} placeholder='Số Điện Thoại (+84)' style={{ color: 'black', marginTop: 20, height: 48, zIndex: 1, width: '75%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
+                    <TouchableOpacity onPress={() => handleCheckAuth()} style={{ borderRadius: 5, marginTop: 10, backgroundColor: '#1dcbb6', height: 45, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '75%' }}>
+                        <Text style={{ color: 'white', fontFamily: 'Nunito-B' }}>Tiếp Tục</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ width, flexDirection: 'column', alignItems: 'center' }}>
+                    <Image source={Logo} style={{ width: 300, height: 300, marginTop: '20%' }} />
+                    <Text style={{ fontFamily: 'Nunito-B', fontSize: 22 }}>Xác Minh Số Điện Thoại</Text>
+                    <TextInput value={otp} onChangeText={e => setOtp(e)} placeholder='Mã xác minh' style={{ color: 'black', marginTop: 20, height: 48, zIndex: 1, width: '75%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
+                    <TouchableOpacity onPress={() => handleSubmitOTPWithPhoneNumber()} style={{ borderRadius: 5, marginTop: 10, backgroundColor: '#1dcbb6', height: 45, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '75%' }}>
+                        <Text style={{ color: 'white', fontFamily: 'Nunito-B' }}>Tiếp Tục</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ width, flexDirection: 'column', alignItems: 'center' }}>
+                    <Image source={Logo} style={{ width: 300, height: 300, marginTop: '20%' }} />
+                    <Text style={{ fontFamily: 'Nunito-B', fontSize: 22 }}>Cung Cấp Mật Khẩu Mới</Text>
+                    <TextInput value={newPass} onChangeText={e => setNewPass(e)} secureTextEntry={true} placeholder='Mật Khẩu Mới' style={{ color: 'black', marginTop: 10, height: 48, zIndex: 1, width: '75%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
+                    <TextInput value={confirmNewPass} onChangeText={e => setConfirmNewPass(e)} secureTextEntry={true} placeholder='Xác Nhận Mật Khẩu Mới' style={{ color: 'black', marginTop: 10, height: 48, zIndex: 1, width: '75%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
+                    <TouchableOpacity onPress={() => handleSubmitChangePassword()} style={{ borderRadius: 5, marginTop: 10, backgroundColor: '#1dcbb6', height: 45, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '75%' }}>
+                        <Text style={{ color: 'white', fontFamily: 'Nunito-B' }}>Xác Nhận</Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
         </Animated.View>
     );
 };

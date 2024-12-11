@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Animated, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { menuContext } from '../../contexts/MenuContext';
 import { Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
@@ -13,6 +13,7 @@ import MedicalRecordHome from './MedicalRecordHome';
 import { notifyType } from '../../utils/notify';
 import { utilsContext } from '../../contexts/UtilsContext';
 import WebView from 'react-native-webview';
+import Icon2 from 'react-native-vector-icons/AntDesign';
 
 const DetailAppoinmentHome = () => {
     const { menuData, menuHandler } = useContext(menuContext);
@@ -28,6 +29,8 @@ const DetailAppoinmentHome = () => {
     const [medicalRecord, setMedicalRecord] = useState()
     const [currentLayout, setCurrentLayout] = useState(0)
     const { utilsHandler } = useContext(utilsContext)
+    const [star, setStar] = useState(0)
+    const [comments, setComments] = useState("");
 
     useEffect(() => {
         if (wrapperRef.current) {
@@ -122,6 +125,35 @@ const DetailAppoinmentHome = () => {
         });
     };
 
+    const handleSubmitAssessment = () => {
+        const data = {
+            doctor_record_id: payloadData.appointmentHome?.doctor_record_id,
+            assessment_list: {
+                star,
+                content: comments,
+                fullName: payloadData.appointmentHome?.patient.fullName,
+                image: payloadData.appointmentHome?.patient.image,
+                date: {
+                    day: payloadData.appointmentHome?.appointment_date?.day,
+                    month: payloadData.appointmentHome?.appointment_date?.month,
+                    year: payloadData.appointmentHome?.appointment_date?.year,
+                },
+            },
+        };
+        api({
+            type: TypeHTTP.POST,
+            path: `/assessments/save`,
+            body: data,
+            sendToken: false,
+        }).then((res) => {
+            utilsHandler.notify(
+                notifyType.SUCCESS,
+                "Đánh giá thành công, Cảm ơn bạn đã đánh giá!!!"
+            );
+            setCurrentLayout(0)
+        });
+    };
+
     return (
         <Animated.View
             style={{
@@ -148,9 +180,9 @@ const DetailAppoinmentHome = () => {
                     {payloadData.appointmentHome && (<>
                         <Text style={{ fontFamily: 'Nunito-B', fontSize: 18 }}>THÔNG TIN CHI TIẾT CUỘC HẸN</Text>
                         <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>Khám tại nhà</Text>
-                        <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>{`${convertDateToDayMonthYearVietNam(payloadData.appointmentHome.appointment_date)}`}</Text>
+                        <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>{payloadData.appointmentHome.appointment_date.day !== 0 ? `${convertDateToDayMonthYearVietNam(payloadData.appointmentHome.appointment_date)}` : 'Chưa rõ giờ hẹn'}</Text>
                         <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between', width: '100%', alignItems: 'center', gap: 5, padding: 5, borderRadius: 5 }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
                                 <View style={{
                                     height: 60,
                                     width: 60,
@@ -178,23 +210,21 @@ const DetailAppoinmentHome = () => {
                                     <Text style={{ fontFamily: 'Nunito-R', fontSize: 14 }}>{userData.user?.role !== "DOCTOR"
                                         ? doctorRecord?.doctor?.phone
                                         : payloadData.appointmentHome?.patient?.phone}</Text>
+                                    <Text style={{ fontFamily: 'Nunito-S', fontSize: 14, color: color[payloadData.appointmentHome?.status?.status_type] }}>{status[payloadData.appointmentHome?.status?.status_type]}</Text>
+                                    <Text style={{ fontFamily: 'Nunito-R', fontSize: 14 }}>{payloadData.appointmentHome?.status?.status_type === "ACCEPTED"
+                                        ? calculateDetailedTimeDifference(
+                                            convertDateToDayMonthYearTimeObject(
+                                                new Date().toISOString()
+                                            ),
+                                            payloadData.appointmentHome?.appointment_date
+                                        )
+                                        : payloadData.appointmentHome?.status?.message}</Text>
                                 </View>
-                            </View>
-                            <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-                                <Text style={{ fontFamily: 'Nunito-S', fontSize: 14, color: color[payloadData.appointmentHome?.status?.status_type] }}>{status[payloadData.appointmentHome?.status?.status_type]}</Text>
-                                <Text style={{ fontFamily: 'Nunito-R', fontSize: 14 }}>{payloadData.appointmentHome?.status?.status_type === "ACCEPTED"
-                                    ? calculateDetailedTimeDifference(
-                                        convertDateToDayMonthYearTimeObject(
-                                            new Date().toISOString()
-                                        ),
-                                        payloadData.appointmentHome?.appointment_date
-                                    )
-                                    : payloadData.appointmentHome?.status?.message}</Text>
                             </View>
                         </View>
                         <View style={{ width: '100%', flexDirection: 'row', alignItems: 'flex-start', gap: 5, paddingHorizontal: 10 }}>
                             <Text style={{ fontSize: 16, fontWeight: 600 }}>Lời Nhắn:</Text>
-                            <Text style={{ fontSize: 16, width: '90%' }}>{payloadData.appointmentHome.note}</Text>
+                            <Text style={{ fontSize: 16, width: '75%' }}>{payloadData.appointmentHome.note}</Text>
                         </View>
                         <View style={{ width: '100%', flexDirection: 'row', alignItems: 'flex-start', gap: 5, paddingHorizontal: 10 }}>
                             <Text style={{ fontSize: 16, fontWeight: 600 }}>Thiết bị có sẵn:</Text>
@@ -210,14 +240,25 @@ const DetailAppoinmentHome = () => {
                                         <Text style={{ color: 'white' }}>Hoàn thành cuộc hẹn</Text>
                                     </TouchableOpacity>
                                 )}
-                            {/* {userData.user?._id ===
+                            {userData.user?._id ===
                                 payloadData.appointmentHome?.patient?._id &&
                                 payloadData.appointmentHome?.status.status_type ===
                                 "COMPLETED" && (
-                                    <TouchableOpacity onPress={() => handleSubmit()} style={{ borderRadius: 5, backgroundColor: '#1dcbb6', height: 35, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
+                                    <TouchableOpacity onPress={() => setCurrentLayout(3)} style={{ borderRadius: 5, backgroundColor: '#1dcbb6', height: 35, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
                                         <Text style={{ color: 'white' }}>Đánh giá bác sĩ</Text>
                                     </TouchableOpacity>
-                                )} */}
+                                )}
+                            {(userData.user?._id ===
+                                payloadData.appointmentHome?.patient?._id &&
+                                payloadData.appointmentHome?.status.status_type ===
+                                "ACCEPTED" && payloadData.appointmentHome?.processAppointment === 1) && (
+                                    <TouchableOpacity onPress={() => {
+                                        payloadHandler.setBookingHome(payloadData.appointmentHome)
+                                        menuHandler.setDisplayInformationBookingHome(true)
+                                    }} style={{ borderRadius: 5, backgroundColor: '#1dcbb6', height: 35, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 }}>
+                                        <Text style={{ color: 'white' }}>Thanh Toán</Text>
+                                    </TouchableOpacity>
+                                )}
                             {(userData.user?._id ===
                                 doctorRecord?.doctor?._id ||
                                 finish) &&
@@ -284,6 +325,37 @@ const DetailAppoinmentHome = () => {
                 </View>
                 {/* Medical Record */}
                 <MedicalRecordHome setMedicalRecord={setMedicalRecord} setCurrentLayout={setCurrentLayout} doctorRecord={doctorRecord} medicalRecord={medicalRecord} />
+                {/* đánh giá bác sĩ*/}
+                <View style={{ width: width, flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+                    <View style={{ flexDirection: 'row', gap: 10 }}>
+                        <TouchableOpacity onPress={() => setCurrentLayout(0)}>
+                            <Icon1 name='arrow-back-ios-new' style={{ fontSize: 25, color: 'black' }} />
+                        </TouchableOpacity>
+                        <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3, width: '80%' }}>Bạn hãy đánh giá cho bác sĩ</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 20 }}>
+                        <TouchableOpacity onPress={() => setStar(1)}>
+                            <Icon2 name='star' style={{ color: star >= 1 ? '#f4d03f' : '#999', fontSize: 35 }} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setStar(2)}>
+                            <Icon2 name='star' style={{ color: star >= 2 ? '#f4d03f' : '#999', fontSize: 35 }} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setStar(3)}>
+                            <Icon2 name='star' style={{ color: star >= 3 ? '#f4d03f' : '#999', fontSize: 35 }} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setStar(4)}>
+                            <Icon2 name='star' style={{ color: star >= 4 ? '#f4d03f' : '#999', fontSize: 35 }} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setStar(5)}>
+                            <Icon2 name='star' style={{ color: star >= 5 ? '#f4d03f' : '#999', fontSize: 35 }} />
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={{ fontFamily: 'Nunito-S', fontSize: 15, width: '90%', marginTop: 20 }}>Nội dung đánh giá:</Text>
+                    <TextInput value={comments} onChangeText={e => setComments(e)} multiline={true} textAlignVertical="top" numberOfLines={15} placeholder='Mô Tả Thêm' style={{ color: 'black', height: 150, zIndex: 1, width: '90%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, paddingVertical: 10, borderColor: '#bbb' }} />
+                    <TouchableOpacity onPress={() => handleSubmitAssessment()} style={{ borderRadius: 5, backgroundColor: '#1dcbb6', marginTop: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 10 }}>
+                        <Text style={{ color: 'white', fontFamily: 'Nunito-B', fontSize: 18, width: '90%', textAlign: 'center' }}>Xác nhận</Text>
+                    </TouchableOpacity>
+                </View>
             </ScrollView>
         </Animated.View>
     )

@@ -30,8 +30,19 @@ const HeartBeats = ({ logBook, setLogBook }) => {
         setValue('')
     }
 
-    const handleSubmit = () => {
-
+    const handleSubmit = () => { // sửa ở đây
+        if (value === "") {
+            utilsHandler.notify(notifyType.WARNING, "Hãy nhập đầy đủ thông tin");
+            return;
+          }
+          if (isNaN(Number(value))) {
+            utilsHandler.notify(notifyType.WARNING, "Hãy nhập số");
+            return;
+          }
+          if (Number(value) <= 0 || Number(value) >= 300) {
+            utilsHandler.notify(notifyType.WARNING, "Nhịp tim không hợp lệ");
+            return;
+          }
         const dataAI = {
             patient: {
                 sex: userData.user?.sex,

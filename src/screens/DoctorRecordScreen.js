@@ -9,6 +9,7 @@ import { utilsContext } from '../contexts/UtilsContext';
 import { notifyType } from '../utils/notify';
 import { eachDayOfInterval, endOfMonth, startOfMonth } from 'date-fns';
 import { compareDate1GetterThanDate2, compareDateIsHaveInSchedule, convertDateToDayMonth, convertDateToDayMonthYearObject } from '../utils/date';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 const DoctorRecordScreen = () => {
     const { width, height } = Dimensions.get('window');
@@ -20,33 +21,55 @@ const DoctorRecordScreen = () => {
     const { utilsHandler } = useContext(utilsContext)
     const daysName = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     const [days, setDays] = useState([])
-    const monthStart = useMemo(() => startOfMonth(new Date()), []);
-    const monthEnd = useMemo(() => endOfMonth(new Date()), []);
+    const [currentMonth, setCurrentMonth] = useState({
+        month: 0,
+        year: 0,
+    });
+    const [monthStart, setMonthStart] = useState()
+    const [monthEnd, setMonthEnd] = useState()
     useEffect(() => {
-        const formatDays = eachDayOfInterval({ start: monthStart, end: monthEnd })
-        if (formatDays[0].toString().includes('Tue'))
-            for (let i = 0; i <= 0; i++)
-                formatDays.unshift('')
-        else if (formatDays[0].toString().includes('Wed'))
-            for (let i = 0; i <= 1; i++)
-                formatDays.unshift('')
-        else if (formatDays[0].toString().includes('Thu'))
-            for (let i = 0; i <= 2; i++)
-                formatDays.unshift('')
-        else if (formatDays[0].toString().includes('Fri'))
-            for (let i = 0; i <= 3; i++)
-                formatDays.unshift('')
-        else if (formatDays[0].toString().includes('Sat'))
-            for (let i = 0; i <= 4; i++)
-                formatDays.unshift('')
-        else if (formatDays[0].toString().includes('Sun'))
-            for (let i = 0; i <= 5; i++)
-                formatDays.unshift('')
-        const remain = formatDays.length % 7
-        for (let i = remain; i < 7; i++) {
-            formatDays.push('')
+        const currentDate = new Date();
+        setCurrentMonth({
+            month: currentDate.getMonth() + 1,
+            year: currentDate.getFullYear()
+        })
+    }, [])
+    useEffect(() => {
+        if (currentMonth.month && currentMonth.year) {
+            const { month, year } = currentMonth;
+            const date = new Date(year, month - 1); // Chuyển đổi về dạng Date
+            setMonthStart(startOfMonth(date))
+            setMonthEnd(endOfMonth(date))
         }
-        setDays(formatDays)
+    }, [currentMonth])
+
+    useEffect(() => {
+        if (monthStart && monthEnd) {
+            const formatDays = eachDayOfInterval({ start: monthStart, end: monthEnd })
+            if (formatDays[0].toString().includes('Tue'))
+                for (let i = 0; i <= 0; i++)
+                    formatDays.unshift('')
+            else if (formatDays[0].toString().includes('Wed'))
+                for (let i = 0; i <= 1; i++)
+                    formatDays.unshift('')
+            else if (formatDays[0].toString().includes('Thu'))
+                for (let i = 0; i <= 2; i++)
+                    formatDays.unshift('')
+            else if (formatDays[0].toString().includes('Fri'))
+                for (let i = 0; i <= 3; i++)
+                    formatDays.unshift('')
+            else if (formatDays[0].toString().includes('Sat'))
+                for (let i = 0; i <= 4; i++)
+                    formatDays.unshift('')
+            else if (formatDays[0].toString().includes('Sun'))
+                for (let i = 0; i <= 5; i++)
+                    formatDays.unshift('')
+            const remain = formatDays.length % 7
+            for (let i = remain; i < 7; i++) {
+                formatDays.push('')
+            }
+            setDays(formatDays)
+        }
     }, [monthStart, monthEnd])
 
     useEffect(() => {
@@ -77,6 +100,32 @@ const DoctorRecordScreen = () => {
         menuHandler.setDisplaySchedule(true)
         payloadHandler.setDay(day)
     }
+
+    const handleNextMonth = () => {
+        setCurrentMonth((prev) => {
+            let nextMonth = prev.month + 1;
+            let nextYear = prev.year;
+            if (nextMonth > 12) {
+                nextMonth = 1;
+                nextYear += 1;
+            }
+            return { month: nextMonth, year: nextYear };
+        });
+    }
+
+    const handlePrevMonth = () => {
+        setCurrentMonth((prev) => {
+            let prevMonth = prev.month - 1;
+            let prevYear = prev.year;
+
+            if (prevMonth < 1) {
+                prevMonth = 12;
+                prevYear -= 1;
+            }
+
+            return { month: prevMonth, year: prevYear };
+        });
+    };
 
     return (
         <ScrollView>
@@ -112,43 +161,48 @@ const DoctorRecordScreen = () => {
                                 <Text style={{ fontFamily: 'Nunito-S' }}>Gọi Khám: {doctorRecord?.examination_call}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Text style={{ fontFamily: 'Nunito-S' }}>Tư Vấn: {doctorRecord?.consultation}</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Text style={{ fontFamily: 'Nunito-S' }}>Đánh Giá: {doctorRecord?.assessment}</Text>
                             </View>
                         </View>
                     </View>
-                    <Text style={{ fontFamily: 'Nunito-B', fontSize: 18 }}>Lịch Khám Bệnh</Text>
-                    <View style={{ flexDirection: 'row', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
-                        {daysName.map((day, index) => (
-                            <View key={index} style={{ width: '11%', height: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={{ fontFamily: 'Nunito-B', fontSize: 16 }}>{day}</Text>
-                            </View>
-                        ))}
-                        {days.map((day, index) => (
-                            <View style={{ width: '11%', height: 40 }} key={index}>
-                                {(day + '') !== '' && (
-                                    <>
-                                        {compareDate1GetterThanDate2(convertDateToDayMonthYearObject(day + ''), convertDateToDayMonthYearObject(new Date().toISOString())) ? (
-                                            <TouchableOpacity style={{ height: '100%', width: '100%', flexDirection: 'column', borderRadius: 5, alignItems: 'center', justifyContent: 'center', backgroundColor: compareDateIsHaveInSchedule(convertDateToDayMonthYearObject(day + ''), doctorRecord?.schedules) === 0 ? '#f2f3f4' : '#d1f2eb' }} onPress={() => { userData.user?.email === null ? utilsHandler.notify(notifyType.WARNING, "Bác sĩ hãy cập nhật địa chỉ email trước khi đăng ký lịch khám !!!") : handleOpenSchedule(convertDateToDayMonthYearObject(day + '')) }}>
-                                                <Text style={{ fontFamily: 'Nunito-R', fontSize: 13 }}>{convertDateToDayMonth(day + '').split('/')[0]}</Text>
-                                                {compareDateIsHaveInSchedule(convertDateToDayMonthYearObject(day + ''), doctorRecord?.schedules) !== 0 && (
-                                                    <Text style={{ fontFamily: 'Nunito-R', fontSize: 13 }}>{`(${compareDateIsHaveInSchedule(convertDateToDayMonthYearObject(day + ''), doctorRecord?.schedules)})`}</Text>
-                                                )}
-                                            </TouchableOpacity>
-                                        ) : (
-                                            <View style={{ backgroundColor: '#d7dbdd', height: '100%', width: '100%', borderRadius: 5, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                                <Text style={{ fontFamily: 'Nunito-R', fontSize: 13 }}>{convertDateToDayMonth(day + '').split('/')[0]}</Text>
-                                                {compareDateIsHaveInSchedule(convertDateToDayMonthYearObject(day + ''), doctorRecord?.schedules) !== 0 && (
-                                                    <Text style={{ fontFamily: 'Nunito-R', fontSize: 13 }}>{`(${compareDateIsHaveInSchedule(convertDateToDayMonthYearObject(day + ''), doctorRecord?.schedules)})`}</Text>
-                                                )}
-                                            </View>
-                                        )}
-                                    </>
-                                )}
-                            </View>
-                        ))}
+                    <Text style={{ fontFamily: 'Nunito-B', fontSize: 18 }}>Lịch Khám Bệnh (Tháng {currentMonth.month}/{currentMonth.year})</Text>
+                    <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                        <TouchableOpacity onPress={() => handlePrevMonth()}>
+                            <Icon name='arrowleft' style={{ fontSize: 25, color: '#999' }} />
+                        </TouchableOpacity>
+                        <View style={{ flexDirection: 'row', gap: 10, width: '90%', flexWrap: 'wrap', justifyContent: 'center' }}>
+                            {daysName.map((day, index) => (
+                                <View key={index} style={{ width: '11%', height: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                                    <Text style={{ fontFamily: 'Nunito-B', fontSize: 16 }}>{day}</Text>
+                                </View>
+                            ))}
+                            {days.map((day, index) => (
+                                <View style={{ width: '10%', height: 33 }} key={index}>
+                                    {(day + '') !== '' && (
+                                        <>
+                                            {compareDate1GetterThanDate2(convertDateToDayMonthYearObject(day + ''), convertDateToDayMonthYearObject(new Date().toISOString())) ? (
+                                                <TouchableOpacity style={{ height: '100%', width: '100%', flexDirection: 'column', borderRadius: 5, alignItems: 'center', justifyContent: 'center', backgroundColor: compareDateIsHaveInSchedule(convertDateToDayMonthYearObject(day + ''), doctorRecord?.schedules) === 0 ? '#f2f3f4' : '#d1f2eb' }} onPress={() => { userData.user?.email === null ? utilsHandler.notify(notifyType.WARNING, "Bác sĩ hãy cập nhật địa chỉ email trước khi đăng ký lịch khám !!!") : handleOpenSchedule(convertDateToDayMonthYearObject(day + '')) }}>
+                                                    <Text style={{ fontFamily: 'Nunito-R', fontSize: 12 }}>{convertDateToDayMonth(day + '').split('/')[0]}</Text>
+                                                    {compareDateIsHaveInSchedule(convertDateToDayMonthYearObject(day + ''), doctorRecord?.schedules) !== 0 && (
+                                                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 12 }}>{`(${compareDateIsHaveInSchedule(convertDateToDayMonthYearObject(day + ''), doctorRecord?.schedules)})`}</Text>
+                                                    )}
+                                                </TouchableOpacity>
+                                            ) : (
+                                                <View style={{ backgroundColor: '#d7dbdd', height: '100%', width: '100%', borderRadius: 5, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                                                    <Text style={{ fontFamily: 'Nunito-R', fontSize: 12 }}>{convertDateToDayMonth(day + '').split('/')[0]}</Text>
+                                                    {compareDateIsHaveInSchedule(convertDateToDayMonthYearObject(day + ''), doctorRecord?.schedules) !== 0 && (
+                                                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 12 }}>{`(${compareDateIsHaveInSchedule(convertDateToDayMonthYearObject(day + ''), doctorRecord?.schedules)})`}</Text>
+                                                    )}
+                                                </View>
+                                            )}
+                                        </>
+                                    )}
+                                </View>
+                            ))}
+                        </View>
+                        <TouchableOpacity onPress={() => handleNextMonth()}>
+                            <Icon name='arrowright' style={{ fontSize: 25, color: '#999' }} />
+                        </TouchableOpacity>
                     </View>
                     <Text style={{ fontFamily: 'Nunito-B', fontSize: 18 }}>Thông Tin Chi Tiết</Text>
                     <TextInput value={doctorRecord?.area} onChangeText={e => setDoctorRecord({ ...doctorRecord, area: e })} placeholder='Nơi làm việc' style={{ color: 'black', height: 45, zIndex: 1, width: '100%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 10, borderRadius: 7, borderColor: '#bbb' }} />

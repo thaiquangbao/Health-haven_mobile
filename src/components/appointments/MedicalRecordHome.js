@@ -10,10 +10,11 @@ import { notifyType } from '../../utils/notify';
 import { api, TypeHTTP } from '../../utils/api';
 import { convertDateToDayMonthYearObject } from '../../utils/date';
 import Icon from 'react-native-vector-icons/Feather';
+import { menuContext } from '../../contexts/MenuContext';
 
 const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setMedicalRecord }) => {
     const { userData } = useContext(userContext)
-    const { payloadData } = useContext(payloadContext)
+    const { payloadData, payloadHandler } = useContext(payloadContext)
     const { width, height } = Dimensions.get('window');
     const [showPicker, setShowPicker] = useState(false);
     const [medical, setMedical] = useState([]);
@@ -32,6 +33,7 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
     const [weight, setWeight] = useState(0);
     const [height1, setHeight1] = useState(0);
     const [unit, setUnit] = useState('1')
+    const { menuHandler } = useContext(menuContext)
     const unitOptions = {
         '1': "Viên",
         '2': "Vỉ",
@@ -42,28 +44,16 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
         '7': "Tuýp"
     };
 
-    const addMedical = () => {
-        if (nameMedical === '') {
-            utilsHandler.notify(notifyType.WARNING, "Vui lòng nhập tên thuốc")
-            return
+    useEffect(() => {
+        if (payloadData.currentMedical) {
+            setMedical([...medical, payloadData.currentMedical]);
+            payloadHandler.setCurrentMedical()
         }
-        if (quantity === '') {
-            utilsHandler.notify(notifyType.WARNING, "Vui lòng nhập số lượng")
-            return
-        }
-        const newMedical = {
-            medicalName: nameMedical,
-            quantity: Number(quantity),
-            unitOfCalculation: unitOptions[unit],
-        };
-        setMedical([...medical, newMedical]);
-        setNameMedical("");
-        setQuantity("");
-    };
+    }, [payloadData.currentMedical])
 
     const updateMedicalRecord = () => {
         let splitDate = reAppointmentDate
-            ? reAppointmentDate.split("-")
+            ? reAppointmentDate.split("-").map(item => Number(item))
             : [];
         // chổ này cần check xem có nhập đủ thông tin không
         if (symptoms === "") {
@@ -128,7 +118,9 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
             setDiagnosisDisease(medicalRecord.diagnosisDisease)
             setSymptoms(medicalRecord.symptoms)
             setNote(medicalRecord.note)
-            setReAppointmentDate()
+            if (medicalRecord.reExaminationDate?.day !== 0) {
+                setReAppointmentDate(`${medicalRecord.reExaminationDate.year}-${medicalRecord.reExaminationDate.month}-${medicalRecord.reExaminationDate.day}`)
+            }
             setTemperature(medicalRecord.temperature + '')
             setBloodPressure(medicalRecord.bloodPressure)
             setHealthRate(medicalRecord.healthRate + '')
@@ -271,33 +263,25 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
                         <TextInput value={diagnosisDisease} onChangeText={e => setDiagnosisDisease(e)} placeholder='Chuẩn đoán bệnh' style={{ color: 'black', marginTop: 5, height: 48, zIndex: 1, width: '95%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
                         <TextInput value={note} onChangeText={e => setNote(e)} placeholder='Lời dặn bác sĩ' style={{ color: 'black', marginTop: 5, height: 48, zIndex: 1, width: '95%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
                         <Text style={{ fontSize: 17, fontWeight: 600, width: '100%', paddingHorizontal: 10, marginTop: 10 }}>Đơn thuốc</Text>
-                        <View style={{ flexDirection: 'column', gap: 5, padding: 10, borderRadius: 8, borderWidth: 1, borderColor: '#bbb', width: '95%' }}>
-                            <TextInput value={nameMedical} onChangeText={e => setNameMedical(e)} placeholder='Tên thuốc' style={{ color: 'black', marginTop: 5, height: 48, zIndex: 1, width: '100%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
-                            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
-                                <TextInput value={quantity} onChangeText={e => setQuantity(e)} placeholder='Số lượng' style={{ color: 'black', marginTop: 5, height: 48, zIndex: 1, width: '48%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb' }} />
-                                <TouchableOpacity onPress={() => setDisplay(true)} style={{ color: 'black', marginTop: 5, height: 48, zIndex: 1, width: '48%', backgroundColor: 'white', borderWidth: 1, paddingHorizontal: 15, borderRadius: 7, borderColor: '#bbb', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} >
-                                    <Text style={{}}>{unitOptions[unit]}</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'flex-end' }}>
-                                <TouchableOpacity onPress={() => addMedical()} style={{ gap: 5, backgroundColor: '#66cc66', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 40, paddingHorizontal: 10, borderRadius: 5 }}>
-                                    <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, color: 'white' }}>Thêm Thuốc</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
+                        <TouchableOpacity onPress={() => menuHandler.setDisplayAddMedical(true)} style={{ gap: 5, backgroundColor: '#66cc66', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 40, paddingHorizontal: 10, borderRadius: 5 }}>
+                            <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, color: 'white' }}>Thêm Thuốc</Text>
+                        </TouchableOpacity>
                         {medical.length > 0 ? (
                             <View style={{ flexDirection: 'column', gap: 5, width: '95%', paddingVertical: 10 }}>
                                 {medical.map((item, index) => (
-                                    <View style={{ flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 15, borderRadius: 8, backgroundColor: '#f1f1f1', gap: 10, justifyContent: 'space-between' }} key={index}>
-                                        <Text>{item.medicalName}</Text>
-                                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-                                            <Text>{item.quantity} {item.unitOfCalculation}</Text>
-                                            <TouchableOpacity onPress={() => setMedical(prev => prev.filter(item1 => item1.medicalName === item.medicalName))}>
-                                                <Icon name="x" style={{ fontSize: 30 }} />
-                                            </TouchableOpacity>
+                                    <View style={{ flexDirection: 'row', width: '100%', paddingHorizontal: 10, paddingVertical: 15, borderRadius: 8, backgroundColor: '#f1f1f1', gap: 5, justifyContent: 'flex-start', alignItems: 'center' }} key={index}>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <Text style={{ width: '60%', fontWeight: 500 }}>{item.medicalName}</Text>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', width: '30%' }}>
+                                                <Text>{item.quantity} {item.unitOfCalculation}</Text>
+                                            </View>
                                         </View>
+                                        <TouchableOpacity style={{}} onPress={() => setMedical(prev => prev.filter(item1 => item1.medicalName !== item.medicalName))}>
+                                            <Icon name="x" style={{ fontSize: 30 }} />
+                                        </TouchableOpacity>
                                     </View>
                                 ))}
+
                             </View>
                         ) : (
                             <>
@@ -321,7 +305,7 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
                         </View>
                         <View style={{ width: '95%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text style={{ width: '40%', fontSize: 16, fontWeight: 600 }}>Ngày Tái Khám: </Text>
-                            <TouchableOpacity style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15, fontSize: 16, backgroundColor: 'white', borderRadius: 7, width: '60%', borderColor: '#bbb', height: 48, borderWidth: 1 }} onPress={() => setShowPicker(true)}>
+                            <TouchableOpacity style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15, fontSize: 16, backgroundColor: 'white', borderRadius: 7, width: '60%', borderColor: '#bbb', height: 48, borderWidth: 1 }}>
                                 <Text style={{ color: '#999' }}>
                                     {reAppointmentDate ? reAppointmentDate.split('-')[2] + "/" + reAppointmentDate.split('-')[1] + "/" + reAppointmentDate.split('-')[0] : 'dd/mm/yyyy'}
                                 </Text>
@@ -333,8 +317,8 @@ const MedicalRecordHome = ({ doctorRecord, medicalRecord, setCurrentLayout, setM
                         {medical.length > 0 ? (
                             <View style={{ flexDirection: 'column', gap: 5, width: '95%', paddingVertical: 10 }}>
                                 {medical.map((item, index) => (
-                                    <View style={{ flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 15, borderRadius: 8, backgroundColor: '#f1f1f1', gap: 10, justifyContent: 'space-between' }} key={index}>
-                                        <Text>{item.medicalName}</Text>
+                                    <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 15, borderRadius: 8, backgroundColor: '#f1f1f1', gap: 10, justifyContent: 'space-between' }} key={index}>
+                                        <Text style={{ width: '65%', fontWeight: 500 }}>{item.medicalName}</Text>
                                         <Text>{item.quantity} {item.unitOfCalculation}</Text>
                                     </View>
                                 ))}

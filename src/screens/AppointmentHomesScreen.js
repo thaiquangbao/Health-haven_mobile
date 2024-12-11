@@ -26,7 +26,7 @@ const AppointmentHomesScreen = () => {
                 path: `/appointmentHomes/findByPatient/${userData.user._id}`,
                 sendToken: true,
             }).then((logBooks) => {
-                setAppointmentHomes(logBooks);
+                setAppointmentHomes(logBooks.reverse());
             });
             api({
                 type: TypeHTTP.GET,
@@ -66,20 +66,37 @@ const AppointmentHomesScreen = () => {
                 <Text style={{ fontSize: 20, fontFamily: 'Nunito-B', width: '100%' }}>Chào {userData.user?.fullName}</Text>
                 <Text style={{ fontFamily: 'Nunito-R', width: '70%' }}>Đăng ký khám sức khỏe tại nhà với các bác sĩ để nhận được lời khuyên tốt nhất.</Text>
                 <View style={{ flexDirection: 'column', width: '70%', marginTop: 10, gap: 10 }}>
-                    {sortByAppointmentDate(appointmentHomes).map((home, index) => (
+                    {appointmentHomes.map((home, index) => (
                         <TouchableOpacity onPress={() => {
                             menuHandler.setDisplayDetailAppointmentHome(true)
                             payloadHandler.setAppointmentHome(home)
                         }} key={index} style={{ flexDirection: 'row', gap: 10, backgroundColor: '#f8f9f9', paddingHorizontal: 10, paddingVertical: 10, alignItems: 'flex-start', borderRadius: 8 }}>
-                            <Image source={{ uri: home.patient.image }} style={{ height: 60, width: 60, borderRadius: 60 }} />
+                            <View style={{
+                                height: 60,
+                                width: 60,
+                                borderWidth: 1,
+                                borderColor: '#1dcbb6',
+                                overflow: 'hidden',
+                                borderRadius: 150
+                            }}>
+                                <Image
+                                    source={{
+                                        uri: home.doctor.image
+                                    }}
+                                    style={{
+                                        height: 90,
+                                        width: 60,
+                                    }}
+                                />
+                            </View>
                             <View style={{ flexDirection: 'column', gap: 3 }}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-                                    <Text style={{ fontSize: 16, fontWeight: 600 }}>Bệnh nhân:</Text>
-                                    <Text style={{ fontSize: 16 }}>{home.patient.fullName}</Text>
+                                    <Text style={{ fontSize: 16, fontWeight: 600 }}>Bác sĩ:</Text>
+                                    <Text style={{ fontSize: 16 }}>{home.doctor.fullName}</Text>
                                 </View>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
                                     {/* <Text style={{ fontSize: 15, fontWeight: 600 }}>Thời gian:</Text> */}
-                                    <Text style={{ fontSize: 15 }}>{home.status?.status_type === "ACCEPTED" ? `${convertDateToDayMonthYearVietNam(
+                                    <Text style={{ fontSize: 15 }}>{['ACCEPTED', 'COMPLETED'].includes(home.status?.status_type) ? `${convertDateToDayMonthYearVietNam(
                                         home.appointment_date
                                     )}` : 'Chưa rõ thời gian'}</Text>
                                 </View>
@@ -97,6 +114,7 @@ const AppointmentHomesScreen = () => {
                                 </View>
                                 <Text style={{
                                     fontSize: 14,
+                                    width: '60%'
                                 }}>{home.note}</Text>
                                 {userData.user.role === 'USER' ?
                                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>

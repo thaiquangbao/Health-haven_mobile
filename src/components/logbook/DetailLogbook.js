@@ -109,7 +109,7 @@ const DetailLogbook = () => {
       <View style={{ width: '100%', flexDirection: 'column', alignItems: 'center', gap: 10, top: 40 }}>
         <View style={{ flexDirection: 'column', gap: 5, width: '100%' }}>
           <Text style={{ fontSize: 20, color: 'black', fontFamily: 'Nunito-B', textAlign: 'center' }}>Thông tin cá nhân </Text>
-          <Text style={{ fontSize: 16, color: 'black', fontFamily: 'Nunito-R', paddingLeft: 20 }}>Trạng thái: {payloadData.logbook?.status?.status_type !== "STOPPED" ? "Đang theo dõi sức khỏe" : "Đã dừng theo dõi sức khỏe"}</Text>
+          <Text style={{ fontSize: 16, color: 'black', fontFamily: 'Nunito-R', paddingLeft: 20 }}>Trạng thái: {payloadData.logbook?.status?.status_type !== "CANCELED" ? "Đang theo dõi sức khỏe" : "Đã dừng theo dõi sức khỏe"}</Text> 
         </View>
         <View style={{ flexDirection: 'column', gap: 10, width, paddingLeft: 20 }}>
           <Text style={{ fontSize: 16, color: 'black', fontFamily: 'Nunito-R' }}>Họ và tên: {payloadData.logbook?.patient.fullName}</Text>

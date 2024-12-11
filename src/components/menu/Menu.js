@@ -36,11 +36,16 @@ const Menu = () => {
                 <Image source={Logo} style={{ height: 50, width: 50 }} />
                 <Text style={{ fontSize: 22, fontFamily: 'Nunito-B', color: '#229bff' }}>HealthHaven</Text>
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
                 {!userData.user && (
-                    <TouchableOpacity onPress={() => menuHandler.setDisplaySignIn(true)} style={{ borderRadius: 5, backgroundColor: '#1dcbb6', paddingVertical: 8, paddingHorizontal: 15 }}>
-                        <Text style={{ color: 'white', fontFamily: 'Nunito-B' }}>Đăng Nhập</Text>
-                    </TouchableOpacity>
+                    <>
+                        <TouchableOpacity onPress={() => utilsHandler.setReload(true)}>
+                            <Icon1 name='reload' style={{ fontSize: 30, color: '#566573' }} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => menuHandler.setDisplaySignIn(true)} style={{ borderRadius: 5, backgroundColor: '#1dcbb6', paddingVertical: 8, paddingHorizontal: 15 }}>
+                            <Text style={{ color: 'white', fontFamily: 'Nunito-B' }}>Đăng Nhập</Text>
+                        </TouchableOpacity>
+                    </>
                 )}
                 {userData.user && (
                     <>

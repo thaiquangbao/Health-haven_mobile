@@ -89,7 +89,6 @@ const InformationBookingNormal = () => {
 
     const handleNextStep = () => {
         if (!userData.user) {
-            console.log(payloadData.bookingNormal?.patient?.sex)
             if (!payloadData.bookingNormal?.patient?.fullName) {
                 utilsHandler.notify(notifyType.WARNING, "Họ Tên Không Hợp Lệ");
                 return;
@@ -461,12 +460,20 @@ const InformationBookingNormal = () => {
                                     <TextInput value={payloadData.bookingNormal?.weight} onChangeText={e => payloadHandler.setBookingNormal({ ...payloadData.bookingNormal, weight: e })} style={{ fontFamily: 'Nunito-R', width: 150, height: 40 }} placeholder='Nhập cân nặng' />
                                 </View>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
+                                    <Text style={{ fontFamily: 'Nunito-S', fontSize: 15 }}>Chiều cao (cm): </Text>
+                                    <TextInput value={payloadData.bookingNormal?.height} onChangeText={e => payloadHandler.setBookingNormal({ ...payloadData.bookingNormal, height: e })} style={{ fontFamily: 'Nunito-R', width: 150, height: 40 }} placeholder='Nhập chiều cao' />
+                                </View>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
                                     <Text style={{ fontFamily: 'Nunito-S', fontSize: 15 }}>Huyết áp (mmHg): </Text>
                                     <TextInput value={payloadData.bookingNormal?.bloodPressure} onChangeText={e => payloadHandler.setBookingNormal({ ...payloadData.bookingNormal, bloodPressure: e })} style={{ fontFamily: 'Nunito-R', width: 150, height: 40 }} placeholder='Nhập huyết áp' />
                                 </View>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
                                     <Text style={{ fontFamily: 'Nunito-S', fontSize: 15 }}>Nhịp tim (bpm): </Text>
                                     <TextInput value={payloadData.bookingNormal?.healthRate} onChangeText={e => payloadHandler.setBookingNormal({ ...payloadData.bookingNormal, healthRate: e })} style={{ fontFamily: 'Nunito-R', width: 150, height: 40 }} placeholder='Nhập nhịp tim' />
+                                </View>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
+                                    <Text style={{ fontFamily: 'Nunito-S', fontSize: 15 }}>Nhiệt độ (°C): </Text>
+                                    <TextInput value={payloadData.bookingNormal?.temperature} onChangeText={e => payloadHandler.setBookingNormal({ ...payloadData.bookingNormal, temperature: e })} style={{ fontFamily: 'Nunito-R', width: 150, height: 40 }} placeholder='Nhập nhiệt độ' />
                                 </View>
                             </View>
                             <View style={{ flexDirection: 'column', gap: 5, borderRadius: 5, width: '85%', borderWidth: 1, borderColor: '#cacfd2', marginTop: 15, paddingHorizontal: 20, paddingVertical: 10 }}>

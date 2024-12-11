@@ -178,11 +178,12 @@ const MenuArea = () => {
                     <Text style={{ fontFamily: 'Nunito-S', fontSize: 17 }}>HealthHaven ChatBot</Text>
                 </TouchableOpacity>
             </>)}
+            {userData.user?.role !== 'DOCTOR' && (<>
             <TouchableOpacity onPress={() => { menuHandler.setDisplay(false); menuHandler.setDisplaySmartSearching(true) }} style={{ width: '100%', gap: 10, flexDirection: 'row', alignItems: 'center' }}>
                 <Icon name='search' style={{ fontSize: 30, color: '#ff3359' }} />
                 <Text style={{ fontFamily: 'Nunito-S', fontSize: 17 }}>Tìm Kiếm Thông Minh</Text>
             </TouchableOpacity>
-
+            </>)}
             <TouchableOpacity onPress={() => navigate('forums')} style={{ width: '100%', gap: 10, flexDirection: 'row', alignItems: 'center' }}>
                 <Icon1 name='message' style={{ fontSize: 30, color: '#fb3997' }} />
                 <Text style={{ fontFamily: 'Nunito-S', fontSize: 17 }}>Thảo Luận</Text>

@@ -24,6 +24,7 @@ import InformationBookingHome from "../components/bookingHome/payment/Informatio
 import FormSchedule from "../components/appointments/FormSchedule";
 import ChatBot from "../components/chatbot/ChatBot";
 import SmartSearching from "../components/smartsearching/SmartSearching";
+import AddMedical from "../components/appointments/AddMedical";
 export const menuContext = createContext()
 
 const MenuProvider = ({ children }) => {
@@ -51,6 +52,7 @@ const MenuProvider = ({ children }) => {
     const [displayDetailAppointmentHome, setDisplayDetailAppointmentHome] = useState(false)
     const [displayChatBot, setDisplayChatBot] = useState(false)
     const [displaySmartSearching, setDisplaySmartSearching] = useState(false)
+    const [displayAddMedical, setDisplayAddMedical] = useState(false)
 
     const hidden = () => {
         setDisplay(false)
@@ -77,6 +79,7 @@ const MenuProvider = ({ children }) => {
         setDisplayDetailAppointmentHome(false)
         setDisplayChatBot(false)
         setDisplaySmartSearching(false)
+        setDisplayAddMedical(false)
     }
 
     const data = {
@@ -103,7 +106,8 @@ const MenuProvider = ({ children }) => {
         displayScheduleAppoimentHome,
         displayDetailAppointmentHome,
         displayChatBot,
-        displaySmartSearching
+        displaySmartSearching,
+        displayAddMedical
     }
 
     const handler = {
@@ -130,7 +134,8 @@ const MenuProvider = ({ children }) => {
         setDisplayScheduleAppoimentHome,
         setDisplayDetailAppointmentHome,
         setDisplayChatBot,
-        setDisplaySmartSearching
+        setDisplaySmartSearching,
+        setDisplayAddMedical
     }
 
     return (
@@ -150,19 +155,20 @@ const MenuProvider = ({ children }) => {
             <InformationBookingNormal />
             <InformationBookingHealth />
             <DetailAppointment />
-            <Health />
             <DetailLogbook />
             <Schedule />
             <DetailTime />
             <ChatArea />
+            <Health />
             <FormBookingNormal />
             <FormBookingHome />
             <FormNotificationPayment />
+            <DetailAppointmentHome />
             <InformationBookingHome />
             <FormSchedule />
-            <DetailAppointmentHome />
             <ChatBot />
             <SmartSearching />
+            <AddMedical />
             {/* <MedicalRecord /> */}
             <MedicalRecord />
         </menuContext.Provider>

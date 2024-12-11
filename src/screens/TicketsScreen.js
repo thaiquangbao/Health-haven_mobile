@@ -77,7 +77,7 @@ const TicketScreen = () => {
                                 <IconX name="x" style={{ fontSize: 20 }} />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => { setTicketType("1"); setDisplay(false) }} style={{ marginTop: 10, backgroundColor: '#e5e7e9', paddingHorizontal: 10, borderRadius: 5, paddingVertical: 10 }}>
-                                <Text style={{ fontSize: 17, fontFamily: 'Nunito-S' }}>Phiếu đăng ký hẹn khám</Text>
+                                <Text style={{ fontSize: 17, fontFamily: 'Nunito-S' }}>Phiếu hẹn khám trực tuyến</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => { setTicketType("2"); setDisplay(false) }} style={{ marginTop: 10, backgroundColor: '#e5e7e9', paddingHorizontal: 10, borderRadius: 5, paddingVertical: 10 }}>
                                 <Text style={{ fontSize: 17, fontFamily: 'Nunito-S' }}>Phiếu theo dõi sức khỏe</Text>

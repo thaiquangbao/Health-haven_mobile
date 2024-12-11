@@ -34,8 +34,10 @@ const FollowHealthScreen = () => {
                     <ScrollView style={{ flexDirection: 'column' }}>
                         {logBooks.map((logBook, index) => (
                             <TouchableOpacity onPress={() => {
-                                menuHandler.setDisplayHealth(true)
-                                payloadHandler.setLogbook(logBook)
+                                if (logBook.status.status_type === 'ACCEPTED') {
+                                    menuHandler.setDisplayHealth(true)
+                                    payloadHandler.setLogbook(logBook)
+                                }
                             }} key={index} style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between', width: '100%', alignItems: 'center', gap: 5, backgroundColor: '#f8f9f9', padding: 5, borderRadius: 5 }}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
                                     <View style={{

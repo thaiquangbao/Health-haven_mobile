@@ -53,6 +53,9 @@ const PayLoadProvider = ({ children }) => {
     // assessment
     const [assessment, setAssessments] = useState([])
 
+    // add medical
+    const [currentMedical, setCurrentMedical] = useState()
+
     useEffect(() => {
         api({ type: TypeHTTP.GET, sendToken: false, path: '/assessments/getAll' })
             .then(res => setAssessments(res))
@@ -84,7 +87,8 @@ const PayLoadProvider = ({ children }) => {
         appointmentHome,
         appointmentHomes,
         reload,
-        assessment
+        assessment,
+        currentMedical
     }
 
     const handler = {
@@ -113,7 +117,8 @@ const PayLoadProvider = ({ children }) => {
         setAppointmentHome,
         setAppointmentHomes,
         setReload,
-        setAssessments
+        setAssessments,
+        setCurrentMedical
     }
 
     return (

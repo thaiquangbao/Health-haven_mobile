@@ -60,7 +60,17 @@ const PhieuTheoDoi = ({ type, setType }) => {
 
 
   const handleAcceptLogBook = (logBook) => {
-    api({ path: 'healthLogBooks/accepted', sendToken: true, type: TypeHTTP.POST, body: { _id: logBook._id } })
+    const body = {
+      _id: logBook._id,
+      dateStop: logBook.priceList.type === '3 Tháng' ?
+        convertDateToDayMonthYearTimeObject(new Date(`${logBook.date.year}-${logBook.date.month}-${logBook.date.day}`).setDate(new Date(`${logBook.date.year}-${logBook.date.month}-${logBook.date.day}`).getDate() + 91))
+        :
+        logBook.priceList.type === '6 Tháng' ?
+          convertDateToDayMonthYearTimeObject(new Date(`${logBook.date.year}-${logBook.date.month}-${logBook.date.day}`).setDate(new Date(`${logBook.date.year}-${logBook.date.month}-${logBook.date.day}`).getDate() + 183))
+          :
+          convertDateToDayMonthYearTimeObject(new Date(`${logBook.date.year}-${logBook.date.month}-${logBook.date.day}`).setDate(new Date(`${logBook.date.year}-${logBook.date.month}-${logBook.date.day}`).getDate() + 365))
+    }
+    api({ path: 'healthLogBooks/accepted', sendToken: true, type: TypeHTTP.POST, body })
       .then(logBookAccepted => {
         setLogBooks(prev => prev.map(item => {
           if (item._id === logBookAccepted._id) {

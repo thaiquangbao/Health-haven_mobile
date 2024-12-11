@@ -117,7 +117,7 @@ const DetailAppointment = () => {
                     <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>{payloadData.detailAppointment?.sick}</Text>
                     <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>{`${convertDateToDayMonthYearVietNam(payloadData.detailAppointment?.appointment_date)}`}</Text>
                     <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-between', width: '100%', alignItems: 'center', gap: 5, padding: 5, borderRadius: 5 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'start', gap: 5, width: '50%' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, width: '50%' }}>
                             <View style={{
                                 height: 60,
                                 width: 60,
@@ -165,20 +165,28 @@ const DetailAppointment = () => {
                     </View>
                     <View style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start', paddingHorizontal: 10, marginTop: 5 }}>
                         <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>Cân Nặng: </Text>
-                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 16, marginTop: 3 }}>{payloadData.detailAppointment?.weight === 0 ? 'Không có' : payloadData.detailAppointment?.weight}</Text>
+                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 16, marginTop: 3 }}>{payloadData.detailAppointment?.weight === 0 ? 'Không có' : payloadData.detailAppointment?.weight + ' kg'}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start', paddingHorizontal: 10, marginTop: 5 }}>
+                        <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>Chiều Cao: </Text>
+                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 16, marginTop: 3 }}>{payloadData.detailAppointment?.height === 0 ? 'Không có' : payloadData.detailAppointment?.height + " cm"}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start', paddingHorizontal: 10, marginTop: 5 }}>
                         <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>Nhịp Tim: </Text>
-                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 16, marginTop: 3 }}>{payloadData.detailAppointment?.healthRate === 0 ? 'Không có' : payloadData.detailAppointment?.healthRate}</Text>
+                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 16, marginTop: 3 }}>{payloadData.detailAppointment?.healthRate === 0 ? 'Không có' : payloadData.detailAppointment?.healthRate + ' nhịp/phút'}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start', paddingHorizontal: 10, marginTop: 5 }}>
                         <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>Huyết Áp: </Text>
-                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 16, marginTop: 3 }}>{payloadData.detailAppointment?.bloodPressure === '' ? 'Không có' : payloadData.detailAppointment?.bloodPressure}</Text>
+                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 16, marginTop: 3 }}>{payloadData.detailAppointment?.bloodPressure === '' ? 'Không có' : payloadData.detailAppointment?.bloodPressure + " mmHg"}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start', paddingHorizontal: 10, marginTop: 5 }}>
+                        <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>Huyết Áp: </Text>
+                        <Text style={{ fontFamily: 'Nunito-R', fontSize: 16, marginTop: 3 }}>{payloadData.detailAppointment?.temperature === '' ? 'Không có' : payloadData.detailAppointment?.temperature + " °C"}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start', paddingHorizontal: 10, marginTop: 5 }}>
                         <Text style={{ fontFamily: 'Nunito-S', fontSize: 18, marginTop: 3 }}>Lịch sử khám của bệnh nhân: </Text>
                     </View>
-                    <ScrollView style={{ height: '50%', marginTop: 5, width: '100%', paddingHorizontal: 10 }}>
+                    <ScrollView style={{ height: '42%', marginTop: 5, width: '100%', paddingHorizontal: 10 }}>
                         {medicalRecords.map(
                             (medicalRecord, index) => (
                                 <View key={index} style={{ marginTop: 10, backgroundColor: '#f8f9f9', padding: 5, borderRadius: 10, flexDirection: 'row', gap: 10, alignItems: 'start', width: '100%' }}>
@@ -212,7 +220,7 @@ const DetailAppointment = () => {
                             )
                         )}
                     </ScrollView>
-                    {(payloadData.displayConnect !== payloadData.detailAppointment?._id && userData.user?.role === 'USER') && (
+                    {(payloadData.displayConnect === payloadData.detailAppointment?._id && userData.user?.role === 'USER') && (
                         <TouchableOpacity onPress={() => handleGoToMeet()} style={{ borderRadius: 5, backgroundColor: '#1dcbb6', paddingVertical: 11, marginTop: 12, paddingHorizontal: 20 }}>
                             <Text style={{ color: 'white', fontFamily: 'Nunito-B' }}>Tham Gia Cuộc Hẹn</Text>
                         </TouchableOpacity>

@@ -39,6 +39,14 @@ const BMI = ({ logBook, setLogBook }) => {
     }
 
     const handleSubmit = () => {
+        if (weight === "" || height === "") {
+            utilsHandler.notify(notifyType.WARNING, "Hãy nhập đầy đủ thông tin");
+            return;
+          }
+          if (isNaN(Number(weight)) || isNaN(Number(height))) {
+            utilsHandler.notify(notifyType.WARNING, "Hãy nhập số");
+            return;
+          }
         const dataAI = {
             patient: {
                 sex: userData.user?.sex,

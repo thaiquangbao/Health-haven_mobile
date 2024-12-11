@@ -203,7 +203,7 @@ const CuocHenTaiNha = ({ type, setType }) => {
                             </View>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
                                 {/* <Text style={{ fontSize: 15, fontWeight: 600 }}>Thời gian:</Text> */}
-                                <Text style={{ fontSize: 15 }}>{home.status?.status_type === "ACCEPTED" ? `${convertDateToDayMonthYearVietNam(
+                                <Text style={{ fontSize: 15 }}>{['ACCEPTED', 'COMPLETED'].includes(home.status?.status_type) ? `${convertDateToDayMonthYearVietNam(
                                     home.appointment_date
                                 )}` : 'Chưa rõ thời gian'}</Text>
                             </View>
@@ -221,6 +221,7 @@ const CuocHenTaiNha = ({ type, setType }) => {
                             </View>
                             <Text style={{
                                 fontSize: 14,
+                                width: '60%'
                             }}>{home.note}</Text>
                             {userData.user.role === 'USER' ?
                                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>

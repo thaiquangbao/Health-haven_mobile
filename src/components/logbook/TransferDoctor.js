@@ -39,25 +39,23 @@ const TransferDoctor = ({ hidden, logBook }) => {
       _id: logBook._id,
       doctor: doctorUpdate,
       status: {
-        status_type: "STOPPED",
+        status_type: "CANCELED",
         message: 'Chuyển sang bác sĩ khác'
       },
-      dateStop: convertDateToDayMonthYearTimeObject(new Date().toISOString()),
       statusNew: {
-        status_type: "TRANSFER",
+        status_type: "QUEUE",
         message: "Đang chờ bác sĩ xác nhận"
       }
     }
-
-
+    // sửa chổ này
     api({ type: TypeHTTP.POST, sendToken: true, path: '/healthLogBooks/transfer-doctor', body })
       .then(res => {
-
         utilsHandler.notify(
           notifyType.SUCCESS,
           `Chuyển hồ sơ bệnh nhân cho bác sĩ ${doctor.doctor.fullName} thành công`
         );
         hidden();
+        utilsHandler.setReload(true)
       })
   }
   return (

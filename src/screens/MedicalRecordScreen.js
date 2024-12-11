@@ -19,7 +19,7 @@ const MedicalRecordScreen = () => {
                 type: TypeHTTP.GET,
                 sendToken: false,
                 path: `/medicalRecords/findByPatient/${userData?.user?._id}`,
-            }).then((res) => setMedicalRecords(res));
+            }).then((res) => setMedicalRecords(res.reverse()));
         }
     }, [userData.user]);
 
@@ -28,11 +28,11 @@ const MedicalRecordScreen = () => {
             <View style={{ flexDirection: 'column', alignItems: 'center', width, gap: 10, paddingHorizontal: 20 }}>
                 <Text style={{ fontFamily: 'Nunito-B', fontSize: 22, color: '#273746', width: '100%', textAlign: 'start' }}>Hồ sơ sức khỏe</Text>
             </View>
-            <ScrollView style={{ marginTop: 5, width: '97%', paddingHorizontal: 10 }}>
+            <ScrollView style={{ marginTop: 5, paddingHorizontal: 10, marginBottom: 30 }}>
                 {screenData.currentScreen === 8 && (<>
                     {medicalRecords.map(
                         (medicalRecord, index) => (
-                            <View key={index} style={{ marginTop: 10, width: '100%', backgroundColor: '#f8f9f9', padding: 5, borderRadius: 10, flexDirection: 'row', gap: 10, alignItems: 'start' }}>
+                            <View key={index} style={{ marginTop: 10, width: width * 0.95, backgroundColor: '#f8f9f9', padding: 5, borderRadius: 10, flexDirection: 'row', gap: 10, alignItems: 'start' }}>
                                 <View style={{
                                     height: 60,
                                     width: 60,
@@ -51,13 +51,13 @@ const MedicalRecordScreen = () => {
                                         }}
                                     />
                                 </View>
-                                <View style={{ flexDirection: 'column', marginTop: 5 }}>
-                                    <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>BS. {medicalRecord.doctor?.fullName}</Text>
-                                    <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3 }}>Thời gian: {medicalRecord.date?.day}-{" "}{medicalRecord.date?.month}-{" "}{medicalRecord.date?.year}</Text>
-                                    <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3, width: '43%' }}>Triệu chứng: {medicalRecord.symptoms === '' ? 'Không có' : medicalRecord.symptoms}</Text>
-                                    <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3 }}>Chuẩn đoán: {medicalRecord.diagnosisDisease === '' ? 'Không có' : medicalRecord.diagnosisDisease}</Text>
-                                    <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3 }}>Thuốc: {medicalRecord.medical.map((medicine) => medicine.medicalName).join(", ")}</Text>
-                                    <Text Text style={{ fontFamily: 'Nunito-R', width: '43%', fontSize: 14, marginTop: 3 }}>Ghi chú: {medicalRecord.note === '' ? 'Không có' : medicalRecord.note}</Text>
+                                <View style={{ flexDirection: 'column', marginTop: 5, width: '90%' }}>
+                                    <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3, width: '90%' }}>BS. {medicalRecord.doctor?.fullName}</Text>
+                                    <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3, width: '90%' }}>Thời gian: {medicalRecord.date?.day}-{" "}{medicalRecord.date?.month}-{" "}{medicalRecord.date?.year}</Text>
+                                    <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3, width: '90%' }}>Triệu chứng: {medicalRecord.symptoms === '' ? 'Không có' : medicalRecord.symptoms}</Text>
+                                    <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3, width: '90%' }}>Chuẩn đoán: {medicalRecord.diagnosisDisease === '' ? 'Không có' : medicalRecord.diagnosisDisease}</Text>
+                                    <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3, width: '90%' }}>Thuốc: {medicalRecord.medical.map((medicine) => medicine.medicalName).join(", ")}</Text>
+                                    <Text Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3, width: '90%' }}>Ghi chú: {medicalRecord.note === '' ? 'Không có' : medicalRecord.note}</Text>
                                 </View>
                             </View>
                         )

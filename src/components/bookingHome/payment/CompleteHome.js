@@ -7,13 +7,14 @@ import { api, TypeHTTP } from '../../../utils/api';
 import { utilsContext } from '../../../contexts/UtilsContext';
 import { menuContext } from '../../../contexts/MenuContext';
 import { notifyType } from '../../../utils/notify';
+import CompleteImage from '../../../../assets/payment-successfully.png'
 
 const Complete = ({ setStep }) => {
     const { width } = Dimensions.get('window');
     const { payloadData, payloadHandler } = useContext(payloadContext)
     const { menuHandler } = useContext(menuContext)
 
-    const handleSubmit = () => {
+    const handleGoBack = () => {
         payloadHandler.setBookingHome()
         menuHandler.setDisplayInformationBookingHome(false)
         payloadHandler.setReload(!payloadData.reload)
@@ -21,20 +22,13 @@ const Complete = ({ setStep }) => {
     }
 
     return (
-        <View style={{ width, flexDirection: 'column', alignItems: 'center', paddingHorizontal: 10, paddingTop: 60 }}>
+        <View style={{ width, flexDirection: 'column', alignItems: 'center', paddingHorizontal: 10, paddingTop: 60, gap: 10 }}>
             <Text style={{ fontFamily: 'Nunito-B', fontSize: 20 }}>Hoàn thành đặt khám</Text>
+            <Image source={CompleteImage} style={{ width: 300, height: 150 }} />
+            <Text style={{ fontFamily: 'Nunito-S', fontSize: 15, paddingHorizontal: 50, textAlign: 'center', marginTop: 10 }}>Cảm ơn bạn đã hoàn tất thủ tục đăng ký khám tại nhà với bác sĩ {payloadData.bookingHome?.doctor?.fullName}, hãy chờ bác sĩ chấp nhận cuộc hẹn.</Text>
 
-            <View style={{ flexDirection: 'column', gap: 10, borderRadius: 5, width: '85%', borderWidth: 1, borderColor: '#cacfd2', marginTop: 10 }}>
-                <View style={{ alignItems: 'center', flexDirection: 'row', gap: 5, borderRadius: 5, width: '100%', borderBottomWidth: 1, borderColor: '#cacfd2', paddingHorizontal: 20, paddingVertical: 10 }}>
-                    <Text style={{ fontFamily: 'Nunito-S' }}>Trạng Thái Thanh Toán</Text>
-                </View>
-                <View style={{ alignItems: 'start', flexDirection: 'column', gap: 15, borderRadius: 5, width: '100%', borderBottomWidth: 1, borderColor: '#cacfd2', paddingHorizontal: 20, paddingVertical: 10 }}>
-                    <Text style={{ fontFamily: 'Nunito-B', borderRadius: 5 }}>Thanh Toán Thành Công</Text>
-                </View>
-            </View>
-
-            <TouchableOpacity onPress={() => handleSubmit()} style={{ borderRadius: 5, marginTop: 10, backgroundColor: '#1dcbb6', height: 45, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 15 }}>
-                <Text style={{ color: 'white', fontFamily: 'Nunito-B' }}>Hoàn Tất</Text>
+            <TouchableOpacity onPress={() => handleGoBack()} style={{ borderRadius: 5, width: 250, borderWidth: 2, borderColor: '#1dcbb6', height: 45, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 15 }}>
+                <Text style={{ color: '#1dcbb6', fontFamily: 'Nunito-B' }}>Trở về</Text>
             </TouchableOpacity>
         </View>
     )

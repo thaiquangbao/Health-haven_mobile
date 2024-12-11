@@ -31,6 +31,18 @@ const Temperature = ({ logBook, setLogBook }) => {
     }
 
     const handleSubmit = () => {
+        if (temperature === "") {
+            utilsHandler.notify(notifyType.WARNING, "Hãy nhập đầy đủ thông tin");
+            return;
+          }
+          if (isNaN(Number(temperature))) {
+            utilsHandler.notify(notifyType.WARNING, "Hãy nhập số");
+            return;
+          }
+          if (Number(temperature) <= 25 || Number(temperature) >= 50) {
+            utilsHandler.notify(notifyType.WARNING, "Nhiệt độ cơ thể không hợp lệ");
+            return;
+          }
         const dataAI = {
             patient: {
                 sex: userData.user?.sex,

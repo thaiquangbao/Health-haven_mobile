@@ -113,7 +113,7 @@ const ChatArea = () => {
                 base64: true,
             });
 
-            if (!result.cancelled) {
+            if (!result.cancelled) { // sửa chổ này
                 const file = {
                     base64: result.assets[0].base64,
                     originalname: result.assets[0].fileName,

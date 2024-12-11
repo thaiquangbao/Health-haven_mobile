@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, Image, ScrollView, Text, TouchableOpacity, View, TextInput } from 'react-native';
 import CalenderCheck from 'react-native-vector-icons/FontAwesome';
 import { menuContext } from '../../contexts/MenuContext';
 import { payloadContext } from '../../contexts/PayloadContext';
@@ -9,6 +9,7 @@ import { api, TypeHTTP } from '../../utils/api';
 import { compare2Date, compareTimeDate1GreaterThanDate2, convertDateToDayMonthYearObject, convertDateToDayMonthYearTimeObject, convertDateToDayMonthYearVietNam, isALargerWithin10Minutes, isALargerWithin60Minutes, sortByAppointmentDate } from '../../utils/date';
 import { notifyType } from '../../utils/notify';
 import { returnNumber } from '../../utils/other';
+import IconX from 'react-native-vector-icons/Feather';
 // CuocHen
 const CuocHen = ({ type, setType }) => {
   const [doctorRecord, setDoctorRecord] = useState()
@@ -17,9 +18,12 @@ const CuocHen = ({ type, setType }) => {
   const { utilsHandler } = useContext(utilsContext)
   const { payloadHandler } = useContext(payloadContext)
   const { menuHandler } = useContext(menuContext)
+  const [displayFormCancel, setDisplayFormCancel] = useState(false)
+  const [dataSelected, setDataSelected] = useState();
   const [time, setTime] = useState(
     new Date().getHours() + ":" + new Date().getMinutes()
   );
+  const [reason, setReason] = useState('')
   const [displayConnect, setDisplayConnect] = useState(false);
   const intervalRef = useRef();
   useEffect(() => {
@@ -59,41 +63,13 @@ const CuocHen = ({ type, setType }) => {
 
   useEffect(() => {
     if (appointments.length > 0) {
-      const theFirstAppointment = sortByAppointmentDate(
-        appointments.filter(
-          (item) => item.status === "ACCEPTED"
-        )
-      ).filter((item) =>
-        compareTimeDate1GreaterThanDate2(
-          item.appointment_date,
-          convertDateToDayMonthYearTimeObject(
-            new Date().toISOString()
-          )
-        )
-      )[0];
-      if (theFirstAppointment) {
-        if (
-          compare2Date(
-            convertDateToDayMonthYearTimeObject(
-              new Date().toISOString()
-            ),
-            theFirstAppointment.appointment_date
-          )
-        ) {
-          if (
-            isALargerWithin10Minutes(
-              theFirstAppointment.appointment_date.time,
-              time
-            ) ||
-            isALargerWithin60Minutes(
-              time,
-              theFirstAppointment.appointment_date.time
-            )
-          ) {
-            setDisplayConnect(theFirstAppointment._id);
+      sortByAppointmentDate(appointments.filter((item) => item.status === "ACCEPTED")).forEach((item) => {
+        if (compare2Date(convertDateToDayMonthYearTimeObject(new Date().toISOString()), item.appointment_date)) {
+          if (isALargerWithin10Minutes(item.appointment_date.time, time) || isALargerWithin60Minutes(time, item.appointment_date.time)) {
+            setDisplayConnect(item._id);
           }
         }
-      }
+      })
     }
   }, [appointments, time]);
 
@@ -226,12 +202,23 @@ const CuocHen = ({ type, setType }) => {
   };
 
   const handleCancelAppointment = (appointment) => {
-    const body = {
-      _id: appointment._id,
+    setDisplayFormCancel(true);
+    setDataSelected(appointment); // sửa chổ này
+  };
+  const handleCancel = () => { // sửa chổ này
+    if (reason === "") {
+      utilsHandler.notify(
+              notifyType.WARNING,
+              "Vui lòng nhập lý do hủy"
+      );
+    }
+      const body = {
+      _id: dataSelected._id,
       status: "CANCELED",
       status_message: "Bác sĩ đã hủy cuộc hẹn",
-      note: ""
-    };
+      note: "",
+      reason: reason,
+    };    
     api({
       sendToken: true,
       path: "/appointments/doctor-cancel",
@@ -244,15 +231,15 @@ const CuocHen = ({ type, setType }) => {
       let schedule = record.schedules.filter(
         (item) =>
           item.date.day ===
-          appointment.appointment_date.day &&
+          dataSelected.appointment_date.day &&
           item.date.month ===
-          appointment.appointment_date.month &&
+          dataSelected.appointment_date.month &&
           item.date.year ===
-          appointment.appointment_date.year
+          dataSelected.appointment_date.year
       )[0];
       let time = schedule.times.filter(
         (item) =>
-          item.time === appointment.appointment_date.time
+          item.time === dataSelected.appointment_date.time
       )[0];
       time.status = "";
       api({
@@ -273,10 +260,11 @@ const CuocHen = ({ type, setType }) => {
           notifyType.SUCCESS,
           "Đã hủy cuộc hẹn"
         );
+        setReason('')
+        setDisplayFormCancel(false)
       });
     });
-  };
-
+  }
   const handleRejectAppointment = (appointment) => {
     const body = {
       _id: appointment._id,
@@ -421,10 +409,28 @@ const CuocHen = ({ type, setType }) => {
                 </TouchableOpacity>
               )}
             </View>
-
+            
           </View>
+        
         </TouchableOpacity>
+        
       ))}
+        {displayFormCancel && (
+          <View style={{ width: '100%', height: '100%', justifyContent: 'center', position: 'absolute', top: 0, left: 0, alignItems: 'center', flexDirection: 'row' }}>
+            <View style={{ width: '100%', position: 'absolute', backgroundColor: 'white', borderRadius: 10, zIndex: 4, paddingHorizontal: 30, paddingVertical: 30 }}>
+                <TouchableOpacity style={{ alignItems: 'flex-end', position: 'absolute', top: 5, right: 5 }} onPress={() => {setDisplayFormCancel(false), setReason('')}}>
+                    <IconX name="x" style={{ fontSize: 20 }} />
+                </TouchableOpacity>
+                <Text style={{ fontSize: 17, fontFamily: 'Nunito-S' }}>Lý do hủy cuộc hẹn</Text>
+                <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>Bệnh nhân: {dataSelected.patient.fullName}</Text>
+                <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3 }}>Thời gian: {convertDateToDayMonthYearVietNam(dataSelected.appointment_date)}</Text>
+                <TextInput value={reason} onChangeText={e => setReason(e)} placeholder='Nhập lý do hủy...' style={{ width: '90%', borderWidth: 1, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 5, borderColor: '#e5e7e9', height: 45 }} />
+                <TouchableOpacity onPress={() => handleCancel()} style={{ marginTop: 10, backgroundColor: '#1dcbb6', paddingHorizontal: 3, borderRadius: 5, paddingVertical: 7, width: '47%', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontFamily: 'Nunito-S', color: 'white' }}>Xác nhận </Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+       )}
     </>
   )
 };

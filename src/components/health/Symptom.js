@@ -36,6 +36,10 @@ const Symptom = ({ logBook, setLogBook }) => {
     }
 
     const handleSubmit = () => {
+        if (symptom === "" && note === "") { // sửa ở đây
+            utilsHandler.notify(notifyType.WARNING, "Hãy nhập ít nhật một thông tin");
+            return;
+          }
         const body = {
             _id: logBook._id,
             disMonItem: {

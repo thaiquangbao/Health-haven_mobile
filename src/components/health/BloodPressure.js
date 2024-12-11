@@ -35,7 +35,23 @@ const BloodPressure = ({ logBook, setLogBook }) => {
         setTamTruong('')
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = () => { // sửa ở đây
+        if (tamThu === "" || tamTruong === "") {
+            utilsHandler.notify(notifyType.WARNING, "Hãy nhập đầy đủ thông tin");
+            return;
+          }
+          if (isNaN(Number(tamThu)) || isNaN(Number(tamTruong))) {
+            utilsHandler.notify(notifyType.WARNING, "Hãy nhập số");
+            return;
+          }
+          if (Number(tamThu) <= 0 || Number(tamThu) >= 200) {
+            utilsHandler.notify(notifyType.WARNING, "Tâm thu không hợp lệ");
+            return;
+          }
+          if (Number(tamTruong) <= 0 || Number(tamTruong) >= 200) {
+            utilsHandler.notify(notifyType.WARNING, "Tâm trương không hợp lệ");
+            return;
+          }
         const dataAI = {
             patient: {
                 sex: userData.user?.sex,
