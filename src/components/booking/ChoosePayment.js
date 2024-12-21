@@ -80,6 +80,7 @@ const ChoosePayment = ({ step, setStep, customer }) => {
                     } else {
                         api({ sendToken: false, body: payloadData.bookingImages, path: '/upload-image/mobile/upload', type: TypeHTTP.POST })
                             .then(listImage => {
+                                console.log("user:", payloadData.bookingNormal);
                                 api({ type: TypeHTTP.POST, sendToken: true, path: '/appointments/save', body: { ...payloadData.bookingNormal, price_list: payloadData.bookingNormal.priceList._id, images: listImage } })
                                     .then(res => {
                                         let record = JSON.parse(JSON.stringify(payloadData.doctorRecord))
@@ -156,6 +157,7 @@ const ChoosePayment = ({ step, setStep, customer }) => {
                         } else {
                             api({ sendToken: false, body: payloadData.bookingImages, path: '/upload-image/mobile/upload', type: TypeHTTP.POST })
                                 .then(listImage => {
+                                    console.log("c:", payloadData.bookingNormal);
                                     api({ type: TypeHTTP.POST, sendToken: false, path: '/appointments/save/customer', body: { ...payloadData.bookingNormal, price_list: payloadData.bookingNormal.priceList._id, images: listImage } })
                                         .then(res => {
                                             let record = JSON.parse(JSON.stringify(payloadData.doctorRecord))
@@ -195,7 +197,7 @@ const ChoosePayment = ({ step, setStep, customer }) => {
                                                             messages: "Chưa rút tiền",
                                                         },
                                                         price: payloadData.bookingNormal?.priceList?.price,
-                                                        description: `Thanh toán tư vấn sức khỏe trực tuyến HealthHaven - MaKH${userData.user?._id}`,
+                                                        description: `Thanh toán tư vấn sức khỏe trực tuyến HealthHaven - MaKH${customer.user?._id}`,
                                                     };
                                                     api({
                                                         type: TypeHTTP.POST,

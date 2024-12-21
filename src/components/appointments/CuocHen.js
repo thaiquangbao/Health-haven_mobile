@@ -208,17 +208,17 @@ const CuocHen = ({ type, setType }) => {
   const handleCancel = () => { // sửa chổ này
     if (reason === "") {
       utilsHandler.notify(
-              notifyType.WARNING,
-              "Vui lòng nhập lý do hủy"
+        notifyType.WARNING,
+        "Vui lòng nhập lý do hủy"
       );
     }
-      const body = {
+    const body = {
       _id: dataSelected._id,
       status: "CANCELED",
       status_message: "Bác sĩ đã hủy cuộc hẹn",
       note: "",
       reason: reason,
-    };    
+    };
     api({
       sendToken: true,
       path: "/appointments/doctor-cancel",
@@ -399,38 +399,33 @@ const CuocHen = ({ type, setType }) => {
                 </>
               ) : (
                 appointment.status === "ACCEPTED" && (
-                  <TouchableOpacity onPress={() => handleCancelAppointment(appointment)} style={{ gap: 5, backgroundColor: '#ff2222', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 30, paddingHorizontal: 10, borderRadius: 10 }}>
+                  <TouchableOpacity onPress={() => handleCancelAppointment(appointment)} style={{ gap: 5, backgroundColor: '#ff2222', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 30, paddingHorizontal: 10, borderRadius: 5 }}>
                     <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, color: 'white' }}>Hủy</Text>
                   </TouchableOpacity>)
               )}
-              {displayConnect === appointment._id && (
-                <TouchableOpacity style={{ borderRadius: 5, backgroundColor: '#1dcbb6', paddingVertical: 11, marginTop: 12, paddingHorizontal: 20 }}>
-                  <Text style={{ color: 'white', fontFamily: 'Nunito-B' }}>Tham Gia Cuộc Hẹn</Text>
-                </TouchableOpacity>
-              )}
             </View>
-            
+
           </View>
-        
+
         </TouchableOpacity>
-        
+
       ))}
-        {displayFormCancel && (
-          <View style={{ width: '100%', height: '100%', justifyContent: 'center', position: 'absolute', top: 0, left: 0, alignItems: 'center', flexDirection: 'row' }}>
-            <View style={{ width: '100%', position: 'absolute', backgroundColor: 'white', borderRadius: 10, zIndex: 4, paddingHorizontal: 30, paddingVertical: 30 }}>
-                <TouchableOpacity style={{ alignItems: 'flex-end', position: 'absolute', top: 5, right: 5 }} onPress={() => {setDisplayFormCancel(false), setReason('')}}>
-                    <IconX name="x" style={{ fontSize: 20 }} />
-                </TouchableOpacity>
-                <Text style={{ fontSize: 17, fontFamily: 'Nunito-S' }}>Lý do hủy cuộc hẹn</Text>
-                <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>Bệnh nhân: {dataSelected.patient.fullName}</Text>
-                <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3 }}>Thời gian: {convertDateToDayMonthYearVietNam(dataSelected.appointment_date)}</Text>
-                <TextInput value={reason} onChangeText={e => setReason(e)} placeholder='Nhập lý do hủy...' style={{ width: '90%', borderWidth: 1, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 5, borderColor: '#e5e7e9', height: 45 }} />
-                <TouchableOpacity onPress={() => handleCancel()} style={{ marginTop: 10, backgroundColor: '#1dcbb6', paddingHorizontal: 3, borderRadius: 5, paddingVertical: 7, width: '47%', alignItems: 'center' }}>
-                    <Text style={{ fontSize: 15, fontFamily: 'Nunito-S', color: 'white' }}>Xác nhận </Text>
-                </TouchableOpacity>
-            </View>
+      {displayFormCancel && (
+        <View style={{ width: '100%', height: '100%', justifyContent: 'center', position: 'absolute', top: 0, left: 0, alignItems: 'center', flexDirection: 'row' }}>
+          <View style={{ width: '100%', position: 'absolute', backgroundColor: 'white', borderRadius: 10, zIndex: 4, paddingHorizontal: 30, paddingVertical: 30 }}>
+            <TouchableOpacity style={{ alignItems: 'flex-end', position: 'absolute', top: 5, right: 5 }} onPress={() => { setDisplayFormCancel(false), setReason('') }}>
+              <IconX name="x" style={{ fontSize: 20 }} />
+            </TouchableOpacity>
+            <Text style={{ fontSize: 17, fontFamily: 'Nunito-S' }}>Lý do hủy cuộc hẹn</Text>
+            <Text style={{ fontFamily: 'Nunito-S', fontSize: 16, marginTop: 3 }}>Bệnh nhân: {dataSelected.patient.fullName}</Text>
+            <Text style={{ fontFamily: 'Nunito-R', fontSize: 14, marginTop: 3 }}>Thời gian: {convertDateToDayMonthYearVietNam(dataSelected.appointment_date)}</Text>
+            <TextInput value={reason} onChangeText={e => setReason(e)} placeholder='Nhập lý do hủy...' style={{ width: '90%', borderWidth: 1, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 5, borderColor: '#e5e7e9', height: 45 }} />
+            <TouchableOpacity onPress={() => handleCancel()} style={{ marginTop: 10, backgroundColor: '#1dcbb6', paddingHorizontal: 3, borderRadius: 5, paddingVertical: 7, width: '47%', alignItems: 'center' }}>
+              <Text style={{ fontSize: 15, fontFamily: 'Nunito-S', color: 'white' }}>Xác nhận </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-       )}
+      )}
     </>
   )
 };
